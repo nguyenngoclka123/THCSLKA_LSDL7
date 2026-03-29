@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trận Chiến Bạch Đằng 938</title>
+    <style>
+        /* Thiết kế CSS: Sử dụng phong cách truyền thống với màu đỏ và vàng [3, 4] */
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background-color: #000;
+            font-family: 'Segoe UI', Tahoma, sans-serif;
+        }
+
+        #game-container {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+        }
+
+        /* Video nền tạo trải nghiệm sống động [5, 6] */
+        #bg-video {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover; /* Đảm bảo video phủ kín màn hình [7] */
+            z-index: -1;
+            opacity: 0.6;
+        }
+
+        /* Giao diện người dùng (UI) [8] */
+        #ui-layer {
+            position: absolute;
+            top: 20px;
+            width: 100%;
+            text-align: center;
+            color: gold;
+            text-shadow: 2px 2px 4px #000;
+            pointer-events: none;
+        }
+
+        #menu-overlay {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 10;
+        }
+
+        h1 { font-size: 3rem; margin-bottom: 10px; color: #ff0000; }
+        p { color: #fff; max-width: 600px; text-align: center; line-height: 1.6; }
+
+        button {
+            padding: 15px 30px;
+            font-size: 1.2rem;
+            background-color: gold;
+            border: none;
+            cursor: pointer;
+            font-weight: bold;
+            border-radius: 5px;
+            margin-top: 20px;
+            pointer-events: auto;
+        }
+
+        button:hover { background-color: #ffd700; transform: scale(1.05); }
+
+        canvas {
+            display: block;
+            cursor: crosshair;
+        }
+    </style>
+    <!-- Nhúng thư viện Howler.js để xử lý âm thanh [9, 10] -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.2.3/howler.min.js"></script>
+</head>
+<body>
+
+    <div id="game-container">
+        <!-- Video nền (Sử dụng link placeholder, bạn nên thay bằng file video thật) [11, 12] -->
+        <video autoplay loop muted playsinline id="bg-video">
+            <source src="https://www.w3schools.com/howto/rain.mp4" type="video/mp4">
+        </video>
+
+        <!-- Lớp UI hiển thị điểm số -->
+        <div id="ui-layer">
+            <h2 id="score-display">Điểm: 0 / 20</h2>
+        </div>
+
+        <!-- Màn hình bắt đầu [13] -->
+        <div id="menu-overlay">
+            <h1>TRẬN CHIẾN BẠCH ĐẰNG</h1>
+            <p>Năm 938, Ngô Quyền dùng mưu đóng cọc nhọn dưới lòng sông để tiêu diệt quân Nam Hán [14]. <br>
+               <b>Nhiệm vụ:</b> Điều khiển thuyền ta dẫn dụ thuyền địch va vào cọc ngầm. Đạt 20 điểm để thắng!</p>
+            <button id="start-btn">BẮT ĐẦU CHIẾN ĐẤU</button>
+        </div>
+
+        <canvas id="gameCanvas"></canvas>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        const startBtn = document.getElementById('start-btn');
+        const menuOverlay = document.getElementById('menu-overlay');
+        const scoreDisplay = document.getElementById('score-display');
+
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        let score = 0;
+        let gameRunning = false;
+
+        // Âm thanh sử dụng Howler.js [15, 16]
+        const crashSound = new Howl({ src: ['https://actions.google.com/sounds/v1/impacts/wood_crack.ogg'] });
+        const music = new Howl({ 
+            src: ['https://actions.google.com/sounds/v1/foley/wind_howl.ogg'], 
+            loop: true, 
+            volume: 0.5 
+        });
+
+        // Đối tượng Thuyền
+        class Boat {
+            constructor(x, y, color, speed, isEnemy = false) {
+                this.x = x; this.y = y;
+                this.color = color;
+                this.speed = speed;
+                this.isEnemy = isEnemy;
+                this.radius = 20;
+            }
+
+            draw() {
+                ctx.beginPath();
+                ctx.fillStyle = this.color;
+                ctx.moveTo(this.x, this.y - 20);
+                ctx.lineTo(this.x - 15, this.y + 10);
+                ctx.lineTo(this.x + 15, this.y + 10);
+                ctx.fill();
+                ctx.closePath();
+            }
+
+            update(targetX, targetY) {
+                if (this.isEnemy) {
+                    const dx = targetX - this.x;
+                    const dy = targetY - this.y;
+                    const dist = Math.sqrt(dx*dx + dy*dy);
+                    if (dist > 1) {
+                        this.x += (dx / dist) * this.speed;
+                        this.y += (dy / dist) * this.speed;
+                    }
+                } else {
+                    this.x += (targetX - this.x) * 0.1;
+                    this.y += (targetY - this.y) * 0.1;
+                }
+            }
+        }
+
+        // Đối tượng Cọc Ngầm [17]
+        class Stake {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.radius = 10;
+            }
+            draw() {
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                ctx.fillStyle = '#5C4033'; // Màu gỗ cọc
+                ctx.fill();
+                ctx.closePath();
+            }
+        }
+
+        let player = new Boat(canvas.width/2, canvas.height/2, 'gold', 0, false);
+        let enemies = [];
+        let stakes = [];
+        let mouse = { x: canvas.width/2, y: canvas.height/2 };
+
+        window.addEventListener('mousemove', (e) => {
+            mouse.x = e.clientX;
+            mouse.y = e.clientY;
+        });
+
+        function init() {
+            score = 0;
+            enemies = [];
+            stakes = [];
+            for(let i=0; i<5; i++) stakes.push(new Stake());
+            for(let i=0; i<2; i++) enemies.push(new Boat(Math.random()*canvas.width, 0, 'red', 2, true));
+        }
+
+        function checkCollision(obj1, obj2) {
+            const dx = obj1.x - obj2.x;
+            const dy = obj1.y - obj2.y;
+            return Math.sqrt(dx*dx + dy*dy) < obj1.radius + obj2.radius;
+        }
+
+        function animate() {
+            if (!gameRunning) return;
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            stakes.forEach(s => s.draw());
+            player.update(mouse.x, mouse.y);
+            player.draw();
+
+            // Logic chính: Xử lý va chạm và điểm số [1, 2]
+            enemies.forEach((enemy, eIdx) => {
+                enemy.update(player.x, player.y);
+                enemy.draw();
+
+                // Địch chạm cọc -> +1 điểm
+                stakes.forEach((stake, sIdx) => {
+                    if (checkCollision(enemy, stake)) {
+                        score++;
+                        crashSound.play();
+                        scoreDisplay.innerText = `Điểm: ${score} / 20`;
+                        enemies.splice(eIdx, 1);
+                        enemies.push(new Boat(Math.random()*canvas.width, -50, 'red', 2 + score*0.1, true));
+                    }
+                });
+
+                // Ta chạm địch hoặc ta chạm cọc -> Thua
+                if (checkCollision(player, enemy)) endGame(false);
+            });
+
+            stakes.forEach(s => {
+                if (checkCollision(player, s)) endGame(false);
+            });
+
+            if (score >= 20) endGame(true); // Chiến thắng [2]
+
+            requestAnimationFrame(animate);
+        }
+
+        function endGame(isWin) {
+            gameRunning = false;
+            music.stop();
+            if (isWin) {
+                alert("CHIẾN THẮNG! Bạn đã đánh tan quân Nam Hán trên sông Bạch Đằng!");
+            } else {
+                alert("GAME OVER! Thuyền của bạn đã bị đắm.");
+            }
+            location.reload();
+        }
+
+        // Khởi động khi nhấn nút [13]
+        startBtn.addEventListener('click', () => {
+            menuOverlay.style.display = 'none';
+            gameRunning = true;
+            music.play();
+            init();
+            animate();
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,2218 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Học tốt Lịch sử & Địa lý 7 - Bé Sen</title>
+    <style>
+        :root { --primary: #0054a6; --accent: #f39c12; --pink: #ff7675; --light-bg: #fdfdfd; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; background: #f0f2f5; color: #333; }
+        
+        /* Navigation */
+        nav { background: var(--primary); padding: 10px 40px; display: flex; align-items: center; justify-content: space-between; color: white; position: sticky; top: 0; z-index: 1000; box-shadow: 0 4px 10px rgba(0,0,0,0.15); }
+        .nav-logo { display: flex; align-items: center; gap: 12px; }
+        .nav-logo img { width: 50px; height: 50px; border-radius: 50%; background: white; border: 2px solid var(--accent); }
+        .nav-links { display: flex; gap: 80px; }
+        .nav-links a { color: white; text-decoration: none; font-weight: bold; cursor: pointer; padding: 8px 15px; border-radius: 20px; transition: 0.3s; }
+        .nav-links a:hover { background: rgba(255,255,255,0.2); color: var(--accent); }
+
+        /* Content Container */
+        .main-container { max-width: 1000px; margin: 30px auto; background: white; padding: 30px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); min-height: 600px; }
+        .section { display: none; }
+        .section.active { display: block; }
+
+        /* Game & Quiz Styling */
+        .lesson-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; margin-top: 25px; }
+        .lesson-card { background: var(--light-bg); border: 2px solid #eee; padding: 20px; border-radius: 15px; cursor: pointer; transition: 0.3s; position: relative; overflow: hidden; }
+        .lesson-card:hover { border-color: var(--primary); transform: translateY(-5px); box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
+        .lesson-card h4 { margin: 0 0 10px 0; color: var(--primary); }
+
+        .quiz-box { border: 2px solid var(--primary); padding: 25px; border-radius: 20px; background: #fff; }
+        .opt-btn { display: block; width: 100%; padding: 15px; margin: 12px 0; border: 1px solid #ddd; border-radius: 10px; text-align: left; cursor: pointer; background: white; font-size: 16px; transition: 0.2s; }
+        .opt-btn:hover { background: #f0f7ff; border-color: var(--primary); }
+        .correct { background: #2ecc71 !important; color: white; border-color: #27ae60; }
+        .wrong { background: #e74c3c !important; color: white; border-color: #c0392b; }
+
+        /* MODAL THÔNG BÁO KẾT QUẢ */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.75);
+            display: none; justify-content: center; align-items: center;
+            z-index: 2000; backdrop-filter: blur(5px);
+        }
+        .result-modal {
+            background: white; padding: 40px; border-radius: 25px;
+            text-align: center; max-width: 450px; width: 90%;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+            animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        @keyframes popIn { from { transform: scale(0.7); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+        .score-circle {
+            width: 120px; height: 120px; border-radius: 50%;
+            background: var(--accent); color: white;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 36px; font-weight: bold; margin: 20px auto;
+            border: 5px solid #fff; box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+       .btn-done {
+		display: inline-block; /* Đảm bảo nút nhận đủ định dạng kích thước */
+		min-width: 250px;      /* Đặt độ rộng tối thiểu để không bị co lại */
+		background: var(--primary); 
+		color: white; 
+		border: none;
+		padding: 12px 30px;    /* 12px trên dưới, 30px trái phải */
+		border-radius: 30px; 
+		cursor: pointer;
+		font-weight: bold; 
+		font-size: 16px; 
+		margin-top: 25px;      /* Đẩy nút cách xa dòng chữ "Cố gắng lên nhé" */
+		transition: 0.3s;
+		text-align: center;    /* Đảm bảo chữ nằm chính giữa nút */
+		line-height: 1.2;      /* Giúp khoảng cách dòng của chữ chuẩn hơn */
+		}
+		 /* --- CHATBOX STYLE (GIỐNG CHATBOX1) --- */
+        #chat-wrapper {
+            width: 100%;
+            max-width: 900px;
+            height: 650px;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            border: 2px solid #e1e8ed;
+            margin: 0 auto;
+        }
+
+        #chat-header {
+            background: var(--primary);
+            color: white;
+            padding: 15px 25px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            border-bottom: 4px solid var(--pink);
+        }
+
+        .header-icon {
+            width: 55px;
+            height: 55px;
+            background: white;
+            border-radius: 50%;
+            border: 2px solid var(--pink);
+            object-fit: contain;
+        }
+
+        #chat-body {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            background: #fafafa;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .msg {
+            max-width: 85%;
+            padding: 12px 18px;
+            border-radius: 18px;
+            font-size: 15px;
+            line-height: 1.5;
+            position: relative;
+            word-wrap: break-word;
+        }
+
+        .ai-msg {
+            align-self: flex-start;
+            background: var(--ai-bubble-bg);
+            border-left: 4px solid var(--primary);
+            color: #2c3e50;
+            border-bottom-left-radius: 2px;
+        }
+
+        .user-msg {
+            align-self: flex-end;
+            background: var(--primary);
+            color: white;
+            border-bottom-right-radius: 2px;
+        }
+
+        #chat-input-area {
+            padding: 15px 20px;
+            background: white;
+            border-top: 1px solid #eee;
+            display: flex;
+            gap: 10px;
+        }
+
+        #userInput {
+            flex: 1;
+            padding: 12px 18px;
+            border: 2px solid #eee;
+            border-radius: 25px;
+            outline: none;
+            font-size: 15px;
+            transition: 0.3s;
+        }
+
+        #userInput:focus { border-color: var(--primary); }
+
+        .btn-send {
+            background: var(--primary);
+            color: white;
+            border: none;
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn-send:hover { transform: scale(1.1); background: var(--pink); }
+
+        .source-tag {
+            display: block;
+            font-size: 11px;
+            margin-top: 8px;
+            color: #7f8c8d;
+            font-style: italic;
+            border-top: 1px solid #ddd;
+            padding-top: 5px;
+        }
+	.besen-icon {
+            width: 65px;
+            height: 65px;
+            background: white;
+            border-radius: 50%;
+            border: 3px solid var(--accent-pink);
+            object-fit: contain; /* Đảm bảo hình ảnh Bé Sen không bị méo */
+            transition: 0.3s;
+        }
+
+        .besen-icon:hover { transform: scale(1.1) rotate(5deg); }
+
+        /* Lesson Grid cho các trang khác */
+        .lesson-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 15px; margin-top: 20px; }
+        .lesson-card { background: #f9f9f9; border: 1px solid #ddd; padding: 15px; border-radius: 12px; cursor: pointer; text-align: center; transition: 0.3s; }
+        .lesson-card:hover { border-color: var(--primary); transform: translateY(-3px); box-shadow: 0 5px 10px rgba(0,0,0,0.1); }
+
+    </style>
+</head>
+<body>
+
+<nav>
+    <div class="nav-logo">
+        <img src="besen.jpg" alt="Bé Sen">
+        <div><strong>CHINH PHỤC LỊCH SỬ - ĐỊA LÝ 7</strong><br><small>"Trải nghiệm Sử - Địa thông minh cùng Bé Sen"</small></div>
+    </div>
+    <div class="nav-links">
+        <a onclick="showPage('history')">LỊCH SỬ</a>
+        <a onclick="showPage('geography')">ĐỊA LÝ</a>
+        <a onclick="showPage('ai')">TRỢ LÝ AI</a>
+        <a href="game.html">GAME</a>
+		<a href="3d.html">KHÁM PHÁ 3D</a>
+    </div>
+</nav>
+
+<div class="main-container">
+    <section id="history" class="section active">
+        <h2 style="color:var(--primary);">Phần Lịch sử (Chương 1 - Chương 5)</h2>
+        <p>Chọn một bài học để bắt đầu thử thách kiến thức cùng Bé Sen:</p>
+        <div class="lesson-grid">
+           <div class="lesson-card" onclick="startQuiz('bài 1')"><h4>Bài 1: Chế độ phong kiến Tây Âu</h4></div>
+            <div class="lesson-card" onclick="startQuiz('bài 2')"><h4>Bài 2: Các cuộc phát kiến địa lý</h4></div>
+			<div class="lesson-card" onclick="startQuiz('bài 3')"><h4>Bài 3: Sự hình thành quan hệ sản xuất tư bản chủ nghĩa ở Tây Âu trung đại</h4></div>
+			<div class="lesson-card" onclick="startQuiz('bài 4')"><h4>Bài 4: Văn hoá Phục hưng</h4></div>
+			<div class="lesson-card" onclick="startQuiz('bài 5')"><h4>Bài 5: Phong trào Cải cách tôn giáo</h4></div>
+			<div class="lesson-card" onclick="startQuiz('bài 6')"><h4>Bài 6: Khái lược tiến trình lịch sử Trung Quốc (thế kỉ VII - XIX)</h4></div>
+			<div class="lesson-card" onclick="startQuiz('bài 7')"><h4>Bài 7: Các thành tựu văn hóa chủ yếu của Trung Quốc</h4></div>
+			<div class="lesson-card" onclick="startQuiz('bài 8')"><h4>Bài 8: Vương triều Gúp-ta</h4></div>
+			<div class="lesson-card" onclick="startQuiz('bài 9')"><h4>Bài 9: Vương triều Hồi giáo Đê-li</h4></div>
+			<div class="lesson-card" onclick="startQuiz('bài 10')"><h4>Bài 10: Đế quốc Mô-gôn</h4></div>
+			<div class="lesson-card" onclick="startQuiz('bài 11')"><h4>Bài 11: Đông Nam Á (X-XVI)</h4></div>
+			<div class="lesson-card" onclick="startQuiz('bài 12')"><h4>Bài 12: Vương quốc Cam-pu-chia</h4></div>
+			<div class="lesson-card" onclick="startQuiz('bài 13')"><h4>Bài 13: Vương quốc Lào</h4></div>
+			<div class="lesson-card" onclick="startQuiz('bài 14')"><h4>BBài 14: VN thời Ngô-Đinh-Tiền Lê</h4></div>
+            <div class="lesson-card" onclick="startQuiz('bài 15')"><h4>Bài 15: Đất nước thời Lý</h4></div>
+            <div class="lesson-card" onclick="startQuiz('bài 16')"><h4>Bài 16: VN thời Trần (Xây dựng)</h4></div>
+			<div class="lesson-card" onclick="startQuiz('bài 17')"><h4>Bài 17: Ba lần kháng chiến Mông-Nguyên</h4></div>
+			<div class="lesson-card" onclick="startQuiz('bài 18')"><h4>Bài 18: Nhà Hồ và chống quân Minh</h4></div>
+			<div class="lesson-card" onclick="startQuiz('bài 19')"><h4>Bài 19: Khởi nghĩa Lam Sơn</h4></div>
+			<div class="lesson-card" onclick="startQuiz('bài 20')"><h4>Bài 20: Đại Việt thời Lê Sơ</h4></div>
+			<div class="lesson-card" onclick="startQuiz('bài 21')"><h4>Bài 21: Vùng đất phía Nam từ đầu thế kỉ X đến đầu thế kỉ XVI</h4></div>        </div>
+    </section>
+
+    <section id="geography" class="section">
+        <h2 style="color:var(--primary);">Phần Địa lý (Chương 1 - Chương 6)</h2>
+        <div class="lesson-grid">
+            <div class="lesson-card" onclick="startQuiz('bài 1 địa lý')"><h4>Bài 1: Thiên nhiên Châu Âu</h4></div>
+			<div class="lesson-card" onclick="startQuiz('bài 2 địa lý')"><h4>Bài 2: Đặc điểm dân cư, xã hội châu Âu<h4></div>
+			<div class="lesson-card" onclick="startQuiz('bài 3 địa lý')"><h4>Bài 3: Phương thức con người khai thác, sử dụng và bảo vệ thiên nhiên châu Âu <h4></div>
+			<div class="lesson-card" onclick="startQuiz('bài 4 địa lý')"><h4>Bài 4: Liên minh châu Âu<h4></div>
+
+        </div>
+    </section>
+
+    <section id="ai" class="section">
+    <div id="chat-wrapper">
+    <div id="chat-header">
+        <!-- Hình ảnh Bé Sen đứng trước thông tin chatbox [1] -->
+        <img src="besen.jpg" alt="Bé Sen" class="besen-icon">
+        <div id="header-info">
+            <h3>Bé Sen Trợ Lý AI</h3>
+            <span>Đồng hành học Lịch sử & Địa lý 7</span>
+        </div>
+    </div>
+    
+    <div id="chat-body" id="chatBox">
+        <div class="msg ai-msg">
+            Chào bạn! Mình là **Bé Sen**. Mình đã sẵn sàng giúp bạn giải đáp các kiến thức về:
+            <br>• Lãnh địa phong kiến Tây Âu.
+            <br>• Sự hình thành các triều đại Việt Nam (Lý, Trần, Lê sơ...).
+            <br>• Đặc điểm tự nhiên các châu lục trên thế giới.
+        </div>
+    </div>
+
+    <div id="chat-input-area">
+        <input type="text" id="userInput" placeholder="Hỏi Bé Sen về Nhà Lý, Châu Á..." onkeypress="if(event.key==='Enter') sendMessage()">
+        <button onclick="sendMessage()">➤</button>
+    </div>
+</div>
+
+    </section>
+
+    <section id="quiz-page" class="section">
+        <div class="quiz-box">
+            <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:2px solid #eee; margin-bottom:20px; padding-bottom:10px;">
+                <h3 id="quiz-title">Tên Bài Học</h3>
+                <button onclick="showPage('history')" style="background:none; border:none; color:var(--primary); font-weight:bold; cursor:pointer;">X THOÁT</button>
+            </div>
+            <div id="quiz-content">
+                <p id="question-text" style="font-size:20px; font-weight:bold; color:var(--primary);"></p>
+                <div id="options-area"></div>
+            </div>
+            <div class="mascot-helper" id="besen-feedback" style="display:none;">
+                <img src="besen.jpg" style="width:60px; border-radius:50%;">
+                <div id="feedback-text"></div>
+            </div>
+        </div>
+    </section>
+</div>
+
+<div id="result-overlay" class="modal-overlay">
+    <div class="result-modal">
+        <img src="besen.jpg" style="width:100px; border-radius:50%; border:4px solid var(--accent);">
+        <h2 id="modal-title">Kết quả thử thách</h2>
+        <p id="modal-desc">Bạn đã hoàn thành bài học!</p>
+        <div class="score-circle" id="final-score">0/0</div>
+        <p id="modal-message" style="font-weight:bold; color:#555;"></p>
+        <button class="btn-done" onclick="closeResult()">TIẾP TỤC HÀNH TRÌNH</button>
+    </div>
+</div>
+
+<script>
+    // DỮ LIỆU GAME (Rút gọn để file sạch sẽ, bạn có thể copy thêm từ file cũ của bạn)
+    const gameDatabase = {
+        "bài 1": [
+            {q: "Châu Âu là một bộ phận của lục địa nào?", a: ["Lục địa Phi", "Lục địa Á - Âu", "Lục địa Mỹ", "Lục địa Nam Cực"], c: 1, n: "Châu Âu là bộ phận phía tây của lục địa Á - Âu."},
+            {q: "Diện tích phần đất liền châu Âu khoảng bao nhiêu triệu km2?", a: ["10,1 triệu", "10,5 triệu", "30 triệu", "44,4 triệu"], c: 1, n: "Châu Âu có diện tích nhỏ, khoảng 10,5 triệu km2."},
+            {q: "Dạng địa hình nào chiếm 2/3 diện tích châu Âu?", a: ["Núi trẻ", "Núi già", "Đồng bằng", "Hoang mạc"], c: 2, n: "Địa hình đồng bằng chiếm phần lớn diện tích, khoảng 2/3 diện tích châu lục."},
+            {q: "Đỉnh núi nào cao nhất châu Âu?", a: ["An-pơ", "U-ran", "En-brút", "Phan-xi-păng"], c: 2, n: "Đỉnh En-brút (Elbrus) là đỉnh núi cao nhất châu Âu (5642 m)."},
+            {q: "Con sông dài nhất châu Âu là sông nào?", a: ["Đa-nuýp", "Rai-nơ", "Von-ga", "Nin"], c: 2, n: "Sông Von-ga (Volga) dài nhất châu Âu với 3690 km ."},
+            {q: "Châu Âu nằm hoàn toàn ở bán cầu nào?", a: ["Bán cầu Nam", "Bán cầu Bắc", "Bán cầu Tây", "Bán cầu Đông"], c: 1, n: "Châu Âu nằm hoàn toàn trên bán cầu Bắc."},
+            {q: "Đới khí hậu nào chiếm diện tích lớn nhất châu Âu?", a: ["Đới lạnh", "Đới nóng", "Đới ôn hòa", "Đới cận nhiệt"], c: 2, n: "Đới khí hậu ôn hòa chiếm diện tích lớn nhất châu Âu."},
+            {q: "Kiểu khí hậu nào có đặc điểm 'mùa hạ mát, mùa đông không lạnh lắm'?", a: ["Ôn đới lục địa", "Ôn đới hải dương", "Cận nhiệt trung hải", "Cực và cận cực"], c: 1, n: "Khí hậu ôn đới hải dương có mùa hạ mát, mùa đông không lạnh lắm, nhiệt độ trên 0 độ C."},
+            {q: "Vùng ven biển Địa Trung Hải có thảm thực vật chính là gì?", a: ["Rừng lá kim", "Rừng lá rộng", "Rừng lá cứng", "Thảo nguyên"], c: 2, n: "Phía nam châu Âu có rừng lá cứng Địa Trung Hải [10]."},
+            {q: "Dãy núi nào làm ranh giới tự nhiên giữa châu Âu và châu Á?", a: ["Dãy An-pơ", "Dãy U-ran", "Dãy Hi-ma-lay-a", "Dãy An-đét"], c: 1, n: "Phía đông có dãy U-ran là ranh giới tự nhiên ngăn cách châu Âu với châu Á [9]."},
+            {q: "Dân số châu Âu năm 2020 đứng thứ mấy trong các châu lục?", a: ["Thứ 2", "Thứ 3", "Thứ 4", "Thứ 5"], c: 2, n: "Dân số châu Âu năm 2020 xếp thứ tư trong các châu lục [12]."},
+            {q: "Tỉ lệ dân thành thị của châu Âu năm 2020 là bao nhiêu?", a: ["50%", "65%", "75%", "85%"], c: 2, n: "Châu Âu có mức độ đô thị hóa cao với 75% số dân sống trong các đô thị [13]."},
+            {q: "Quốc gia nào sau đây thuộc Liên minh châu Âu (EU)?", a: ["Thụy Sĩ", "Pháp", "Nga", "Anh (đã rời)"], c: 1, n: "Pháp là một trong những thành viên của Liên minh châu Âu [14]."},
+            {q: "Đồng tiền chung của nhiều nước EU là gì?", a: ["Đô la", "Bảng", "Ơ-rô", "Yên"], c: 2, n: "Đồng tiền chung châu Âu (Ơ-rô) bắt đầu được sử dụng từ năm 2002 [15]."},
+            {q: "Sông Nin nằm ở châu lục nào?", a: ["Châu Âu", "Châu Phi", "Châu Á", "Châu Mỹ"], c: 1, n: "Sông Nin là con sông quan trọng của châu Phi [16]."},
+            {q: "Hoang mạc lớn nhất thế giới Sa-ha-ra ở đâu?", a: ["Bắc Á", "Bắc Phi", "Nam Mỹ", "Bắc Mỹ"], c: 1, n: "Hoang mạc Sa-ha-ra nằm ở phía bắc châu Phi [16]."},
+            {q: "Ai tìm ra châu Mỹ năm 1492?", a: ["Ma-giên-lăng", "Cô-lôm-bô", "Đi-a-xơ", "Va-xco đơ Ga-ma"], c: 1, n: "Năm 1492, C. Cô-lôm-bô tìm đường sang phương Đông nhưng lại tìm ra châu Mỹ [8, 17]."},
+            {q: "Đỉnh núi cao nhất thế giới Ê-vơ-rét nằm ở dãy núi nào?", a: ["An-pơ", "Hi-ma-lay-a", "An-đét", "Coóc-đi-e"], c: 1, n: "Đỉnh Ê-vơ-rét cao nhất thế giới thuộc dãy Hi-ma-lay-a, châu Á [18]."},
+            {q: "Châu lục lạnh nhất thế giới là?", a: ["Châu Âu", "Châu Mỹ", "Châu Nam Cực", "Châu Phi"], c: 2, n: "Châu Nam Cực là lục địa lạnh nhất thế giới [19, 20]."},
+            {q: "Thực vật tạo ra chất gì quan trọng trong quá trình quang hợp?", a: ["Muối", "Đường glucose", "Đá", "Sắt"], c: 1, n: "Thực vật sử dụng quang hợp để tổng hợp đường glucose [21]."}
+             ],
+        "bài 2": [
+			{q: "Từ giữa thế kỷ XV, nhu cầu nào thôi thúc người châu Âu tìm đường sang phương Đông?", a: ["Tìm kiếm vàng bạc, nguyên liệu và thị trường", "Tìm kiếm vùng đất mới để di dân", "Truyền bá Thiên Chúa giáo", "Giao lưu văn hóa"], c: 0, n: "Nhu cầu tìm kiếm vàng bạc, thị trường và hương liệu thôi thúc họ tìm những con đường mới [1, 2]."},
+			{q: "Sự kiện nào làm cho các đường buôn bán truyền thống sang phương Đông bị ách tắc?", a: ["Các cuộc chiến tranh ở châu Âu", "Người Thổ Nhĩ Kỳ chiếm giữ các con đường độc đạo", "Sự sụp đổ của đế chế La Mã", "Nạn cướp biển hoành hành"], c: 1, n: "Con đường buôn bán truyền thống qua Tây Á bị người Thổ Nhĩ Kỳ chiếm giữ, gây bế tắc cho thương nhân châu Âu [2]."},
+			{q: "Loại tàu nào có vai trò quan trọng, giúp các nhà hàng hải vượt đại dương?", a: ["Tàu chiến vỏ đồng", "Tàu hơi nước", "Tàu Ca-ra-ven (Caravel)", "Tàu buồm cỡ nhỏ"], c: 2, n: "Tàu Ca-ra-ven có nhiều cánh buồm lớn, giúp đi ngược hướng gió và thực hiện các chuyến hải trình dài [2, 3]."},
+			{q: "Năm 1487, nhà hàng hải nào đã đi xuống được tận điểm cực nam châu Phi?", a: ["C. Cô-lôm-bô", "V. Ga-ma", "B. Đi-a-xơ (B. Dias)", "Ma-giên-lăng"], c: 2, n: "B. Đi-a-xơ đã đi xuống được tận điểm cực nam của châu Phi và đặt tên là mũi Hảo Vọng [2, 4]."},
+			{q: "Ai là người dẫn đầu đoàn thám hiểm tìm ra châu Mỹ vào năm 1492?", a: ["Ma-giên-lăng", "C. Cô-lôm-bô (C. Columbus)", "Va-xco đơ Ga-ma", "A-mê-ri-gô Ve-xpút-xi"], c: 1, n: "Tháng 10 - 1492, đoàn thám hiểm của C. Cô-lôm-bô đã đặt chân lên một hòn đảo ở châu Mỹ [3, 4]."},
+			{q: "C. Cô-lôm-bô đã nhầm lẫn vùng đất mình tìm ra là nơi nào?", a: ["Tân thế giới", "Châu Phi", "Ấn Độ", "Châu Đại Dương"], c: 2, n: "C. Cô-lôm-bô tưởng vùng đất mới tìm ra là Ấn Độ, nên gọi thổ dân ở đây là người Anh-điêng (người Ấn) [4, 5]."},
+			{q: "Nhà hàng hải nào tìm ra con đường biển sang phương Đông đến được Ấn Độ vào năm 1498?", a: ["B. Đi-a-xơ", "C. Cô-lôm-bô", "V. Ga-ma (Vasco da Gama)", "Ma-giên-lăng"], c: 2, n: "V. Ga-ma đã vượt mũi Hảo Vọng và cập bến Ca-li-cút (Ấn Độ) vào năm 1498 [3, 4]."},
+			{q: "Đoàn thám hiểm của nhà hàng hải nào đã thực hiện chuyến đi vòng quanh thế giới đầu tiên?", a: ["Ph. Ma-giên-lăng (Magellan)", "C. Cô-lôm-bô", "V. Ga-ma", "B. Đi-a-xơ"], c: 0, n: "Đoàn thám hiểm của Ma-giên-lăng (1519 - 1522) đã hoàn thành chuyến đi vòng quanh thế giới đầu tiên [4, 6]."},
+			{q: "Ma-giên-lăng đã tử nạn trong cuộc tranh chấp với người dân trên đảo ở đâu?", a: ["Việt Nam", "Ma-la-ca", "Phi-líp-pin", "Ấn Độ"], c: 2, n: "Ma-giên-lăng đã bị thiệt mạng tại Phi-líp-pin trong một cuộc giao tranh với người dân trên đảo [4, 6]."},
+			{q: "Kết quả quan trọng nhất về mặt khoa học của chuyến đi Ma-giên-lăng là gì?", a: ["Tìm ra vàng", "Khẳng định Trái Đất hình cầu", "Tìm ra châu Mỹ", "Tìm ra con đường sang Ấn Độ"], c: 1, n: "Chuyến hải trình của Ma-giên-lăng đã khẳng định dạng hình cầu của Trái Đất [3, 7]."},
+			{q: "Hệ quả tích cực nào sau đây là của các cuộc phát kiến địa lý?", a: ["Thúc đẩy sự ra đời của chủ nghĩa tư bản", "Nảy sinh nạn buôn bán nô lệ", "Huỷ diệt văn hoá thổ dân", "Xâm chiếm thuộc địa"], c: 0, n: "Phát kiến địa lý thúc đẩy thương nghiệp phát triển, mở rộng thị trường thế giới và sự ra đời của chủ nghĩa tư bản [7, 8]."},
+			{q: "Một trong những hệ quả tiêu cực của phát kiến địa lý là gì?", a: ["Tìm ra những vùng đất mới", "Nảy sinh nạn buôn bán nô lệ da đen", "Thúc đẩy trao đổi văn hóa", "Cung cấp kiến thức địa lý mới"], c: 1, n: "Hệ quả tiêu cực là nảy sinh nạn buôn bán nô lệ da đen và quá trình xâm chiếm thuộc địa [7, 8]."},
+			{q: "Hai quốc gia nào đi đầu trong các cuộc phát kiến địa lý lớn?", a: ["Anh và Pháp", "Đức và Ý", "Bồ Đào Nha và Tây Ban Nha", "Hà Lan và Nga"], c: 2, n: "Bồ Đào Nha và Tây Ban Nha nằm ven Đại Tây Dương là nơi xuất phát của những cuộc phát kiến địa lý lớn [1]."},
+			{q: "Khoảng bao nhiêu người nô lệ da đen đã bị đưa sang châu Mỹ từ thế kỷ XVI đến XIX?", a: ["1 triệu người", "5 triệu người", "Gần 11 triệu người", "20 triệu người"], c: 2, n: "Từ năm 1518 đến 1850, có gần 11 triệu người nô lệ da đen đã bị đưa sang châu Mỹ [7]."},
+			{q: "Cây trồng nào từ châu Mỹ được đưa về châu Âu sau các cuộc phát kiến?", a: ["Gạo, lúa mì", "Chuối, hồ tiêu", "Ngô, khoai tây, cà chua", "Cà phê, chè"], c: 2, n: "Các loại cây trồng như ngô, khoai tây, cà chua từ châu Mỹ được đưa về phổ biến tại châu Âu và thế giới [7]."},
+			{q: "Phát kiến địa lý đã chứng minh các đại dương trên thế giới có đặc điểm gì?", a: ["Bị ngăn cách hoàn toàn", "Là một vùng nước thống nhất", "Chỉ có 2 đại dương lớn", "Nằm trên một mặt phẳng"], c: 1, n: "Các chuyến đi đã chứng minh các đại dương không bị ngăn cách mà là một vùng nước thống nhất [7]."},
+			{q: "Tại sao C. Cô-lôm-bô lại chọn hướng Tây để tìm đường sang Ấn Độ?", a: ["Vì hướng Nam quá xa", "Vì tin vào quan niệm Trái Đất hình cầu", "Vì hướng Đông bị cấm", "Vì muốn tìm châu Mỹ"], c: 1, n: "Dựa trên quan niệm Trái Đất hình cầu, C. Cô-lôm-bô tin rằng đi về hướng Tây sẽ tới được Ấn Độ [3]."},
+			{q: "Trung tâm buôn bán thế giới sau phát kiến địa lý chuyển dịch về đâu?", a: ["Địa Trung Hải", "Ấn Độ Dương", "Đại Tây Dương", "Thái Bình Dương"], c: 2, n: "Hoạt động thương mại chuyển từ Địa Trung Hải sang các cảng biển ven Đại Tây Dương [7]."}, 
+		],
+		"bài 3": [
+			{q: "Nguyên nhân nào giúp quý tộc và thương nhân Tây Âu giàu lên nhanh chóng từ thế kỷ XVI?", a: ["Nhờ sản xuất nông nghiệp", "Nhờ vơ vét của cải và cướp bóc thuộc địa", "Nhờ sự giúp đỡ của Giáo hội", "Nhờ phát triển khoa học"], c: 1, n: "Sau các cuộc phát kiến địa lý, việc vơ vét của cải và cướp bóc thuộc địa giúp họ tích lũy được vốn ban đầu [1]."},
+			{q: "Giai cấp nào được hình thành từ những chủ xưởng, chủ ngân hàng và chủ đồn điền giàu có?", a: ["Giai cấp vô sản", "Giai cấp nông nô", "Giai cấp tư sản", "Giai cấp quý tộc cũ"], c: 2, n: "Những người giàu có nắm giữ tư liệu sản xuất và quyền hành trong kinh tế được gọi là giai cấp tư sản [2, 3]."},
+			{q: "Giai cấp vô sản ở Tây Âu chủ yếu được hình thành từ tầng lớp nào?", a: ["Lãnh chúa phong kiến", "Nông dân bị mất đất và thợ thủ công nghèo", "Thương nhân giàu có", "Các giáo sĩ"], c: 1, n: "Nông dân bị mất đất và thợ thủ công nghèo khổ phải đi làm thuê, trở thành giai cấp vô sản [2, 3]."},
+			{q: "Trong lĩnh vực công nghiệp, hình thức sản xuất nào xuất hiện thay thế cho các phường hội?", a: ["Nhà máy hiện đại", "Công trường thủ công", "Xưởng thủ công gia đình", "Hợp tác xã"], c: 1, n: "Từ thế kỷ XVI, các công trường thủ công tập trung đông đảo người làm thuê xuất hiện thay thế tổ chức phường hội [2]."},
+			{q: "Đặc điểm nổi bật nhất của công trường thủ công là gì?", a: ["Sản xuất tự cung tự cấp", "Có sự phân công lao động tỉ mỉ", "Mỗi người làm tất cả các công đoạn", "Chỉ sản xuất hàng nông sản"], c: 1, n: "Sự phân công lao động trong công trường thủ công đạt đến mức tỉ mỉ, mỗi người chỉ làm một thao tác [2]."},
+			{q: "Trong nông nghiệp, các đồn điền và trang trại lớn đã thay thế cho hình thức nào?", a: ["Kinh tế lãnh địa phong kiến", "Kinh tế hộ gia đình", "Khu công nghiệp", "Thành thị trung đại"], c: 0, n: "Một bộ phận lớn chủ đất chuyển sang kinh doanh tư bản chủ nghĩa, lập các đồn điền và trang trại lớn [3]."},
+			{q: "Vào đầu thế kỷ XVII, tổ chức nào của Anh được thành lập để độc quyền giao thương trà?", a: ["Công ty dầu khí", "Công ty Đông Ấn", "Ngân hàng thế giới", "Hội chợ Săm-pa-nhơ"], c: 1, n: "Năm 1600, Công ty Đông Ấn của Anh được thành lập và được ban cho đặc quyền giao thương trà [3]."},
+			{q: "Quan hệ sản xuất tư bản chủ nghĩa dựa trên mối quan hệ chính giữa hai giai cấp nào?", a: ["Lãnh chúa và nông nô", "Tư sản và vô sản", "Chủ nô và nô lệ", "Địa chủ và nông dân"], c: 1, n: "Quan hệ giữa chủ xưởng (tư sản) và người lao động (vô sản) là quan hệ thuê mướn sức lao động [2, 3]."},
+			{q: "Tác phẩm nào của M. Xéc-van-téc phản ánh sự lỗi thời của xã hội phong kiến cũ?", a: ["Thần khúc", "Ham-lét", "Đôn Ki-hô-tê", "Rô-mê-ô và Giu-li-ét"], c: 2, n: "Tiểu thuyết Đôn Ki-hô-tê phản ánh thế giới mới đang hình thành và sự lạc hậu của xã hội cũ [1]."},
+			{q: "Tại Anh, đạo luật nào được ban hành để trừng phạt những người lang thang không có đất?", a: ["Luật của vua Hen-ri VIII", "Luật Hồng Đức", "Luật Hình thư", "Luật 12 bảng"], c: 0, n: "Vua Anh Hen-ri VIII đã có đạo luật phạt đòn, tù tội và thậm chí xử tử những người lang thang [2]."},
+			{q: "Vì sao giới tư sản Tây Âu có quyền công dân, giàu có nhưng lại chưa có địa vị chính trị tương xứng?", a: ["Vì họ bị Giáo hội ngăn cản", "Vì xã hội phong kiến vẫn đang thống trị", "Vì họ không muốn làm quan", "Vì họ không có học thức"], c: 1, n: "Dù giàu có, giai cấp tư sản vẫn bị kẹt trong những quy định lạc hậu của chế độ phong kiến [1, 2]."},
+			{q: "Đến thế kỷ XVI, các cảng biển nào trở nên sầm uất nhờ giao thương quốc tế?", a: ["Cảng ở Địa Trung Hải", "Cảng ven Đại Tây Dương (như Li-xbon)", "Cảng sông Hồng", "Cảng ở Biển Đen"], c: 1, n: "Sau phát kiến địa lý, các thương cảng ven Đại Tây Dương như Li-xbon trở nên tấp nập [1]."},
+			{q: "Một xưởng làm kim thời kỳ này có thể chia ra bao nhiêu người thợ phối hợp làm việc?", a: ["1-2 người", "Khoảng 50 người", "Thậm chí 92 người thợ", "Trên 500 người"], c: 2, n: "Ví dụ trong xưởng làm kim, sợi dây thép phải qua tay 72, thậm chí 92 người thợ mới thành cái kim [2]."},
+			{q: "Hình thức sản xuất tư bản chủ nghĩa đầu tiên trong công nghiệp là?", a: ["Máy móc tự động", "Phường hội thủ công", "Công trường thủ công", "Kinh tế hộ cá thể"], c: 2, n: "Công trường thủ công là hình thức sản xuất mang tính chất tư bản chủ nghĩa đầu tiên [2]."},
+			{q: "Giai cấp tư sản đã sử dụng phương thức gì để có nguồn nhân công làm thuê?", a: ["Tặng ruộng đất", "Thuê mướn những nông dân mất đất", "Dùng nô lệ da đen", "Tất cả các phương án trên"], c: 1, n: "Họ thuê mướn nông dân mất đất và thợ thủ công nghèo làm việc cho mình [2, 3]."},
+			{q: "Công ty thương mại ra đời vào thời gian nào để thúc đẩy buôn bán giữa các quốc gia?", a: ["Thế kỷ X", "Thế kỷ XI", "Đầu thế kỷ XVII", "Thế kỷ XIX"], c: 2, n: "Các công ty thương mại ra đời vào đầu thế kỷ XVII, thúc đẩy buôn bán xuyên quốc gia [3]."},
+			{q: "Điểm khác biệt chính giữa công trường thủ công và phường hội là?", a: ["Sử dụng máy hơi nước", "Sản xuất theo dây chuyền và thuê mướn nhân công", "Chỉ làm sản phẩm cho lãnh chúa", "Làm việc tại nhà"], c: 1, n: "Công trường thủ công tập trung đông đảo người làm thuê và có sự phân công lao động chuyên sâu [2]."},
+			{q: "Thực vật lấy chất gì từ không khí để thực hiện quá trình quang hợp?", a: ["Khí O2", "Khí Nitơ", "Khí CO2", "Khí Hidro"], c: 2, n: "Bé Sen nhắc bạn: Theo video KHTN, cây cối lấy khí CO2, nước và năng lượng để quang hợp [4]."},
+			{q: "Nền kinh tế hàng hóa phát triển dẫn đến nhu cầu gì của giới chủ Tây Âu?", a: ["Nhu cầu phá bỏ rào cản của kinh tế lãnh địa", "Nhu cầu quay lại thời kỳ cổ đại", "Nhu cầu đóng cửa biên giới", "Nhu cầu đi tu"], c: 0, n: "Sự phát triển của kinh tế hàng hóa đòi hỏi nhu cầu phá bỏ sự cản trở của kinh tế lãnh địa phong kiến [5]."},
+			{q: "Quan hệ sản xuất tư bản chủ nghĩa hình thành báo hiệu sự sụp đổ của chế độ nào?", a: ["Chế độ tư bản", "Chế độ cộng sản", "Chế độ phong kiến", "Chế độ chiếm hữu nô lệ"], c: 2, n: "Đây là tiền đề dẫn đến các cuộc cách mạng tư sản lật đổ chế độ phong kiến lỗi thời sau này [1, 2]."}
+		],
+		"bài 4": [
+			{q: "Phong trào Văn hoá Phục hưng bắt đầu diễn ra vào thời gian nào?", a: ["Thế kỷ XI", "Thế kỷ XIII", "Thế kỷ XIV", "Thế kỷ XVI"], c: 2, n: "Phong trào bắt đầu vào thế kỷ XIV, diễn ra đầu tiên tại các thành phố tự trị miền Bắc I-ta-li-a [1]."},
+			{q: "Thành phố nào được coi là quê hương, cái nôi của phong trào Phục hưng?", a: ["Luân Đôn", "Pa-ri", "Phi-ren-xê (Florence)", "Ma-đrít"], c: 2, n: "Thành phố Phi-ren-xê là nơi lưu giữ nhiều nhất những thành tựu văn hoá Phục hưng [2]."},
+			{q: "Giai cấp nào đã ủng hộ và bảo trợ cho những tư tưởng mới trong phong trào Phục hưng?", a: ["Lãnh chúa phong kiến", "Nông nô", "Giai cấp tư sản", "Giáo sĩ"], c: 2, n: "Tầng lớp chủ xưởng, thương gia giàu có (tư sản) cần một hệ tư tưởng và văn hoá mới nên đã ủng hộ phong trào này [1, 2]."},
+			{q: "Văn hoá Phục hưng có nghĩa là gì?", a: ["Xoá bỏ hoàn toàn văn hoá cũ", "Khôi phục tinh hoa văn hoá Hy Lạp - La Mã cổ đại", "Xây dựng văn hoá phương Đông", "Giữ nguyên tư tưởng Giáo hội"], c: 1, n: "Phục hưng là khôi phục, làm sống lại những giá trị tinh hoa của nền văn minh Hy Lạp và La Mã cổ đại [1]."},
+			{q: "Ai là tác giả của tác phẩm nổi tiếng 'Thần khúc' (Divine Comedy)?", a: ["M. Xéc-van-téc", "W. Sếch-xpia", "Đan-tê", "Lê-ô-na đơ Vanh-xi"], c: 2, n: "Đan-tê là người mở đầu cho phong trào Văn hoá Phục hưng với tác phẩm Thần khúc [3]."},
+			{q: "Tác phẩm 'Đôn Ki-hô-tê' của M. Xéc-van-téc tập trung phê phán đối tượng nào?", a: ["Nông nô khổ cực", "Tầng lớp quý tộc phong kiến lỗi thời", "Những nhà khoa học", "Các thương nhân"], c: 1, n: "Tác phẩm chế giễu những tàn dư lỗi thời của xã hội phong kiến cũ [3]."},
+			{q: "Nhà văn vĩ đại nào là tác giả của 'Ham-lét' và 'Rô-mê-ô và Giu-li-ét'?", a: ["Đan-tê", "W. Sếch-xpia (Shakespeare)", "Pê-trác-ca", "Bô-ca-xi-ô"], c: 1, n: "W. Sếch-xpia là nhà văn, nhà soạn kịch vĩ đại người Anh với những kiệt tác bất hủ [3]."},
+			{q: "Họa sĩ nào là tác giả của bức tranh 'La Giô-công-đơ' (Mona Lisa)?", a: ["Mi-ken-lăng-giơ", "Ra-pha-en", "Lê-ô-na đơ Vanh-xi", "Donatello"], c: 2, n: "Lê-ô-na đơ Vanh-xi là tác giả của bức kiệt tác Mona Lisa và Bữa ăn tối cuối cùng [3]."},
+			{q: "Bức tượng 'Đa-vít' và bức hoạ 'Sáng tạo thế giới' là thành tựu của ai?", a: ["Mi-ken-lăng-giơ (Michelangelo)", "Lê-ô-na đơ Vanh-xi", "Ga-li-lê", "Cô-péc-ních"], c: 0, n: "Mi-ken-lăng-giơ là kiến trúc sư, hoạ sĩ, nhà điêu khắc vĩ đại với các tác phẩm như tượng Đa-vít [3]."},
+			{q: "Thuyết 'Nhật tâm' (Mặt Trời là trung tâm vũ trụ) do ai đưa ra?", a: ["G. Ga-li-lê", "N. Cô-péc-ních", "G. Bru-nô", "I. Niu-tơn"], c: 1, n: "N. Cô-péc-ních là người đưa ra thuyết 'Nhật tâm', thay đổi cách nhìn lỗi thời về vũ trụ [4]."},
+			{q: "Nhà khoa học nào đã bị Giáo hội xét xử vì ủng hộ thuyết Nhật tâm?", a: ["Mi-ken-lăng-giơ", "G. Ga-li-lê", "C. Cô-lôm-bô", "B. Đi-a-xơ"], c: 1, n: "Ga-li-lê là người ủng hộ thuyết Nhật tâm và có nhiều đóng góp cho thiên văn học [4]."},
+			{q: "Tư tưởng cốt lõi của phong trào Văn hoá Phục hưng là gì?", a: ["Đề cao thần linh", "Đề cao giá trị con người và tự do cá nhân", "Củng cố chế độ phong kiến", "Phản đối khoa học"], c: 1, n: "Phong trào đề cao giá trị con người, quyền tự do cá nhân và tinh thần khoa học [4]."},
+			{q: "Văn hoá Phục hưng đã có tác động như thế nào đến Giáo hội Thiên Chúa giáo?", a: ["Ủng hộ Giáo hội tuyệt đối", "Phá vỡ sự thống trị tinh thần của Giáo hội", "Giúp Giáo hội giàu lên", "Không có tác động gì"], c: 1, n: "Phong trào đã phá vỡ sự thống trị tinh thần của Giáo hội Thiên Chúa giáo đối với xã hội [4]."},
+			{q: "Tại sao nói phong trào Phục hưng là một cuộc cách mạng tiến bộ?", a: ["Vì nó tìm ra nhiều vàng bạc", "Vì nó mở đường cho sự phát triển của văn hoá Tây Âu hiện đại", "Vì nó giúp các vị vua giàu lên", "Vì nó xóa bỏ hoàn toàn nông nghiệp"], c: 1, n: "Nó đặt cơ sở và mở đường cho sự phát triển của văn hoá Tây Âu trong những thế kỷ tiếp theo [4]."},
+			{q: "Trong nghệ thuật, thời kỳ Phục hưng lấy đối tượng nào làm chuẩn mực để sáng tác?", a: ["Các vị thần", "Lãnh chúa", "Con người", "Cảnh thiên nhiên"], c: 2, n: "Nghệ thuật thời Phục hưng lấy con người làm chủ thể sáng tác, thoát khỏi những nét buồn thảm của nghệ thuật trung cổ [3]."},
+			{q: "Địa danh nào sau đây là nơi khởi nguồn và tập trung nhiều di sản Phục hưng nhất?", a: ["Pa-ri", "Bô-lô-na", "Phi-ren-xê", "Luân Đôn"], c: 2, n: "Phi-ren-xê là nơi lưu giữ nhiều nhất những thành tựu văn hoá Phục hưng của Ý [2]."},
+			{q: "Tác phẩm văn học nào lên án sự tàn bạo, tham lam của tầng lớp phong kiến?", a: ["Thần khúc", "Ham-lét", "Đôn Ki-hô-tê", "Tất cả các đáp án trên"], c: 3, n: "Hầu hết các tác phẩm văn học lớn thời kỳ này đều hướng đến phê phán xã hội phong kiến cũ [3]."},
+			{q: "Nhà khoa học nào đã hi sinh trên giàn hỏa thiêu để bảo vệ chân lý khoa học?", a: ["N. Cô-péc-ních", "G. Bru-nô", "G. Ga-li-lê", "Đan-tê"], c: 1, n: "G. Bru-nô cùng với Ga-li-lê là những nhà khoa học dũng cảm chống lại quan điểm bảo thủ [4]."},
+			{q: "Sự ra đời của chủ nghĩa tư bản đã dẫn đến nhu cầu gì về tư tưởng?", a: ["Nhu cầu quay lại thời kỳ nô lệ", "Nhu cầu xây dựng một hệ tư tưởng và văn hoá mới", "Nhu cầu cấm đoán buôn bán", "Nhu cầu phá hủy thành thị"], c: 1, n: "Tầng lớp tư sản mới hình thành cần một hệ tư tưởng riêng để phục vụ đời sống của họ [1]."},
+			{q: "Quá trình thực vật tổng hợp đường glucose từ ánh sáng gọi là gì?", a: ["Hô hấp", "Quang hợp", "Thoát hơi nước", "Trao đổi khí"], c: 1, n: "Bé Sen nhắc bạn kiến thức từ video KHTN: Quá trình thực vật lấy CO2, nước và năng lượng để tạo glucose gọi là quang hợp [5]."}
+		],
+		"bài 5": [
+			{q: "Sự kiện nào được coi là khởi đầu cho phong trào Cải cách tôn giáo ở Tây Âu?", a: ["Các cuộc phát kiến địa lý", "Mác-tin Lu-thơ dán bản Luận văn 95 điều (1517)", "Sự ra đời của thành thị trung đại", "Sự sụp đổ của đế chế La Mã"], c: 1, n: "Ngày 31-10-1517, Mác-tin Lu-thơ đã dán bản Luận văn 95 điều lên cửa nhà thờ Vít-ten-béc (Đức) để chỉ trích Giáo hội [3]."},
+			{q: "Nguyên nhân trực tiếp nào làm bùng lên phong trào Cải cách tôn giáo?", a: ["Sự phát triển của khoa học", "Giáo hội cho phép tự do bán 'thẻ miễn tội'", "Sự xuất hiện của giai cấp vô sản", "Sự thống nhất của các vương quốc"], c: 1, n: "Năm 1517, do cần tiền, Giáo hội Thiên Chúa giáo cho phép tự do bán 'thẻ miễn tội', gây phẫn nộ trong xã hội [3]."},
+			{q: "Phong trào Cải cách tôn giáo nổ ra đầu tiên ở quốc gia nào?", a: ["Anh", "Pháp", "Đức", "I-ta-li-a"], c: 2, n: "Phong trào Cải cách tôn giáo khởi nguồn từ Đức [3]."},
+			{q: "Giai cấp nào đang lên muốn thay đổi và 'cải cách' lại tổ chức Giáo hội Thiên Chúa giáo?", a: ["Lãnh chúa phong kiến", "Nông nô", "Giai cấp tư sản", "Thợ thủ công"], c: 2, n: "Giai cấp tư sản đang lên thấy Giáo hội là thế lực cản trở bước tiến của xã hội nên muốn thay đổi [3]."},
+			{q: "Mác-tin Lu-thơ cho rằng con người được cứu rỗi là nhờ điều gì?", a: ["Mua nhiều thẻ miễn tội", "Làm các nghi lễ phức tạp", "Đặt niềm tin vào Thiên Chúa và Kinh Thánh", "Sự bảo hộ của Giáo hoàng"], c: 2, n: "Ông cho rằng chỉ cần đặt niềm tin vào Thiên Chúa và Kinh Thánh thì con người sẽ được cứu rỗi, không cần trung gian [4]."},
+			{q: "Hệ quả lớn nhất của phong trào Cải cách tôn giáo là gì?", a: ["Xóa bỏ hoàn toàn Thiên Chúa giáo", "Phân chia Thiên Chúa giáo thành Cựu giáo và Tân giáo", "Thống nhất các quốc gia châu Âu", "Xóa bỏ giai cấp tư sản"], c: 1, n: "Phong trào dẫn đến sự phân chia Thiên Chúa giáo thành hai giáo phái: Cựu giáo (Công giáo) và Tân giáo (Tin Lành) [4]."},
+			{q: "Tân giáo (Tin Lành) có đặc điểm nào sau đây?", a: ["Nghi lễ rất phức tạp", "Xây dựng nhiều tượng thờ lộng lẫy", "Không thờ tranh ảnh, tượng thờ, nghi lễ đơn giản", "Chỉ dành cho quý tộc"], c: 2, n: "Tân giáo chủ trương không thờ tranh ảnh, tượng thờ, tổ chức nghi lễ đơn giản và tiết kiệm thời gian [4]."},
+			{q: "Ai là nhà cải cách tôn giáo nổi tiếng tại Thụy Sĩ?", a: ["Mác-tin Lu-thơ", "Giăng Can-văng", "Ga-li-lê", "Sếch-xpia"], c: 1, n: "Tiếp sau Mác-tin Lu-thơ là Giăng Can-văng, một nhà cải cách tôn giáo lớn tại Thụy Sĩ [4]."},
+			{q: "Tác động của Cải cách tôn giáo đối với kinh tế của giai cấp tư sản là gì?", a: ["Làm kinh tế suy yếu", "Thúc đẩy các hoạt động phát triển kinh tế", "Cấm buôn bán với nước ngoài", "Tịch thu hết tài sản tư sản"], c: 1, n: "Các thành phố theo đạo cải cách có nền kinh tế phát triển hơn so với các thành phố theo Công giáo [4]."},
+			{q: "Phong trào Cải cách tôn giáo đã tác động đến xã hội như thế nào vào thế kỷ XVI - XVII?", a: ["Hòa bình tuyệt đối", "Dẫn đến tình trạng bất ổn và cuộc chiến tranh nông dân ở Đức", "Xóa bỏ hoàn toàn nông nghiệp", "Làm cho dân số giảm mạnh"], c: 1, n: "Sự phản đối của các thế lực bảo thủ dẫn đến tình trạng bất ổn và cuộc chiến tranh nông dân ở Đức năm 1524 [4]."},
+			{q: "Tại sao giai cấp tư sản lại cần một tôn giáo mới?", a: ["Vì họ muốn đi tu", "Vì họ cần một tôn giáo tiện lợi, tiết kiệm, phù hợp với lối sống mới", "Vì họ sợ bị lãnh chúa bắt", "Vì họ muốn học tiếng Phạn"], c: 1, n: "Tư sản cần một tôn giáo mới phù hợp với nhu cầu phát triển kinh tế và lối sống năng động của họ [4]."},
+			{q: "Đứng đầu Giáo hội Thiên Chúa giáo thời trung đại là ai?", a: ["Hoàng đế", "Lãnh chúa", "Giáo hoàng", "Mascot Bé Sen"], c: 2, n: "Đứng đầu Giáo hội là Giáo hoàng, người có quyền lực chính trị và tâm linh rất lớn [5]."},
+			{q: "Nội dung nào dưới đây KHÔNG phải là tư tưởng của Mác-tin Lu-thơ?", a: ["Chỉ trích hành vi sai trái của Giáo hội", "Phủ nhận vai trò tối cao của Giáo hoàng", "Khuyên giáo dân nên mua thẻ miễn tội", "Đề cao giá trị của Kinh Thánh"], c: 2, n: "Mác-tin Lu-thơ kịch liệt phản đối việc mua bán thẻ miễn tội [4]."},
+			{q: "Luận văn 95 điều của Luân-thơ được dán tại đâu?", a: ["Cổng lâu đài nhà vua", "Cửa nhà thờ Vít-ten-béc", "Hội chợ Săm-pa-nhơ", "Đại học Bô-lô-na"], c: 1, n: "Sự kiện diễn ra tại cửa nhà thờ Vít-ten-béc ở Đức [3]."},
+			{q: "Theo Giáo hội đương thời, 'thẻ miễn tội' có tác dụng gì?", a: ["Dùng để mua hàng hóa", "Dùng để dời đô", "Xóa bỏ mọi tội lỗi cho con người", "Dùng để đi học"], c: 2, n: "Giáo hội tuyên bố thẻ này có thể xóa bỏ tội lỗi cho người mua [3]."},
+			{q: "Tôn giáo nào đã trở thành chỗ dựa vững chắc nhất của chế độ phong kiến Tây Âu?", a: ["Phật giáo", "Thiên Chúa giáo", "Hồi giáo", "Hin-đu giáo"], c: 1, n: "Từ thời trung đại, Thiên Chúa giáo là chỗ dựa vững chắc và chi phối toàn bộ đời sống tinh thần xã hội [3]."},
+			{q: "Cuộc đấu tranh của tư sản chống phong kiến ở châu Âu khởi đầu bằng phong trào nào?", a: ["Phát kiến địa lý", "Cải cách tôn giáo", "Chiến tranh 100 năm", "Thập tự chinh"], c: 1, n: "Cải cách tôn giáo là cuộc đấu tranh vũ trang đầu tiên của tư sản chống lại chế độ phong kiến [4]."},
+			{q: "Địa danh nào sau đây xuất hiện giáo phái Tin Lành mạnh mẽ?", a: ["Đức và Thụy Sĩ", "Việt Nam", "Trung Quốc", "Ấn Độ"], c: 0, n: "Đức và Thụy Sĩ là những nơi khởi nguồn và phát triển mạnh của đạo Cải cách [4]."},
+			{q: "Mục đích của việc đơn giản hóa nghi lễ trong Tân giáo là gì?", a: ["Để mọi người đi ngủ sớm", "Để tiết kiệm thời gian và tiền bạc cho kinh doanh", "Để chống lại nhà vua", "Để bảo vệ môi trường"], c: 1, n: "Nghi lễ đơn giản giúp tiết kiệm thời gian và tiền bạc, phù hợp với nhu cầu của giai cấp tư sản [4]."},
+		  
+		  ],
+		"bài 6": [
+			{q: "Tiến trình lịch sử Trung Quốc từ thế kỉ VII đến giữa thế kỉ XIX trải qua bao nhiêu triều đại lớn?", a: ["3 triều đại", "4 triều đại", "5 triều đại (Đường, Tống, Nguyên, Minh, Thanh)", "6 triều đại"], c: 2, n: "Từ thế kỉ VII đến XIX, Trung Quốc trải qua 5 triều đại lớn xen kẽ với các thời kì chia cắt [1]."},
+			{q: "Triều đại nào được coi là thời kì thịnh trị nhất của chế độ phong kiến Trung Quốc?", a: ["Nhà Tống", "Nhà Đường (618 – 907)", "Nhà Minh", "Nhà Thanh"], c: 1, n: "Nhà Đường là thời kì phát triển rực rỡ về cả chính trị, kinh tế và văn hóa [1]."},
+			{q: "Lãnh thổ Trung Quốc dưới thời nhà Đường có đặc điểm gì nổi bật?", a: ["Bị thu hẹp lại", "Giữ nguyên như thời Hán", "Mở rộng, rộng gần gấp đôi nhà Hán", "Chỉ nằm ở vùng trung lưu sông Hoàng Hà"], c: 2, n: "Vào cuối thế kỉ VII, lãnh thổ nhà Đường rộng gần gấp đôi nhà Hán [2]."},
+			{q: "Chính sách ruộng đất nổi tiếng nào được nhà Đường áp dụng để phát triển nông nghiệp?", a: ["Chế độ quân điền", "Chế độ điền trang", "Chế độ lộc điền", "Chế độ tô dung điệu"], c: 0, n: "Nhà Đường ban hành chính sách giảm thuế và áp dụng chế độ quân điền để ổn định đời sống nông dân [2]."},
+			{q: "Kinh đô Trường An dưới thời nhà Đường có dân số khoảng bao nhiêu?", a: ["500 nghìn người", "1 triệu người", "2 triệu người", "5 triệu người"], c: 2, n: "Trong thế kỉ VII và VIII, Trường An là đô thị lớn nhất thế giới với khoảng 2 triệu người sinh sống [2]."},
+			{q: "Tuyến đường giao thương quốc tế nào phát triển mạnh mẽ nhất dưới thời nhà Đường?", a: ["Đường biển phía Nam", "Con đường tơ lụa", "Đường xuyên Á-Âu qua Bắc cực", "Đường sông Trường Giang"], c: 1, n: "Con đường tơ lụa trở thành tuyến đường buôn bán quốc tế với sự tham gia của thương nhân khắp thế giới [2]."},
+			{q: "Ai là người đã lập ra triều đại nhà Minh vào năm 1368?", a: ["Lý Thế Dân", "Hốt Tất Liệt", "Chu Nguyên Chương", "Khang Hy"], c: 2, n: "Năm 1368, Chu Nguyên Chương lật đổ nhà Nguyên, lên ngôi hoàng đế và lập ra triều Minh [3]."},
+			{q: "Triều đại phong kiến cuối cùng của Trung Quốc là triều đại nào?", a: ["Nhà Minh", "Nhà Tống", "Nhà Thanh (1644 – 1911)", "Nhà Đường"], c: 2, n: "Nhà Thanh là triều đại phong kiến cuối cùng trong lịch sử Trung Quốc [1]."},
+			{q: "Nhà Thanh được thành lập bởi người dân tộc nào?", a: ["Người Hán", "Người Mông Cổ", "Người Mãn Thanh (Mãn Châu)", "Người Thổ Nhĩ Kỳ"], c: 2, n: "Nhà Thanh do người Mãn lập nên sau khi chiếm toàn bộ Trung Quốc vào năm 1644 [1, 3]."},
+			{q: "Dưới thời Minh - Thanh, những giống cây trồng mới nào đã được du nhập vào Trung Quốc?", a: ["Lúa mì, đại mạch", "Khoai lang, ngô, lạc, ớt", "Cà phê, ca cao", "Cao su, hồ tiêu"], c: 1, n: "Thông qua thương nhân Bồ Đào Nha, nhiều giống cây mới từ châu Mỹ đã được nhập vào giúp gia tăng sản lượng lương thực [3]."},
+			{q: "Địa danh nào được mệnh danh là 'kinh đô đồ sứ' của Trung Quốc thời Minh - Thanh?", a: ["Tô Châu", "Quảng Châu", "Trấn Cảnh Đức (Giang Tây)", "Hàng Châu"], c: 2, n: "Trấn Cảnh Đức ở Giang Tây trở thành trung tâm sản xuất đồ sứ nổi tiếng khắp thế giới [3]."},
+			{q: "Thương cảng nào lớn nhất Trung Quốc thời Minh - Thanh, thu hút nhiều thương nhân thế giới?", a: ["Cảng Ma-la-ca", "Cảng Quảng Châu", "Cảng Hải Phòng", "Cảng Thượng Hải"], c: 1, n: "Quảng Châu trở thành thương cảng lớn nhất, nơi tập trung buôn bán với các nước Ấn Độ, Tây Á, Đông Nam Á [4]."},
+			{q: "Từ cuối triều Minh, nhà nước bắt đầu áp dụng chính sách gì đối với ngoại thương?", a: ["Mở cửa hoàn toàn", "Miễn thuế cho thương nhân nước ngoài", "Hạn chế ngoại thương, thậm chí cấm buôn bán bằng đường biển", "Thúc đẩy đi thám hiểm đại dương"], c: 2, n: "Nhà nước bắt đầu áp dụng chính sách hạn chế ngoại thương, gây cản trở cho sự phát triển kinh tế [4] ."},
+			{q: "Nhà Nguyên ở Trung Quốc do bộ tộc nào thành lập?", a: ["Người Mãn", "Người Mông Cổ", "Người Nữ Chân", "Người Khiết Đan"], c: 1, n: "Nhà Nguyên (1271 - 1368) do người Mông Cổ lập nên sau khi xâm chiếm Trung Quốc [1]."},
+			{q: "Sự kiện nào đánh dấu sự kết thúc của hơn 200 năm tồn tại của nhà Đường?", a: ["Khởi nghĩa Lam Sơn", "Sự thành lập nhà Tống", "Thời kì Ngũ đại (907 - 960)", "Sự xâm lược của quân Nguyên"], c: 2, n: "Sau khi nhà Đường sụp đổ là thời kì Ngũ đại (907 - 960) trước khi nhà Tống thống nhất lại [1]."},
+			{q: "Sản phẩm thủ công nghiệp nào của Trung Quốc thời Đường nổi tiếng theo chân đường tơ lụa?", a: ["Đồ sắt và đồng", "Gốm sứ và tơ lụa", "Giấy và thuốc súng", "Rượu vang và dầu oliu"], c: 1, n: "Gốm sứ và tơ lụa của Trung Quốc theo con đường tơ lụa đi đến tận phương Tây [2]."},
+			{q: "Tại sao từ giữa thế kỉ XIX, nhà Thanh ngày càng suy yếu?", a: ["Do thiếu tài nguyên", "Do thiên tai liên tục", "Do chính sách bảo thủ và nguy cơ xâm lược của thực dân phương Tây", "Do dời đô quá nhiều lần"], c: 2, n: "Nhà Thanh suy yếu do các chính sách hạn chế phát triển và đứng trước nguy cơ xâm lược từ phương Tây [1]."},
+			{q: "Đơn vị hành chính cao nhất dưới thời nhà Đường do ai cai quản?", a: ["Lãnh chúa", "Thân tín của hoàng đế (Tiết độ sứ)", "Thương nhân giàu có", "Nông nô"], c: 1, n: "Các hoàng đế nhà Đường cử người thân tín cai quản các địa phương [2]."},
+			{q: "Nghề thủ công nào ở Tô Châu nổi tiếng nhất thời kỳ này?", a: ["Đúc đồng", "Làm đồ sứ", "Dệt lụa", "Đóng thuyền"], c: 2, n: "Tô Châu nổi tiếng với nghề dệt lụa truyền thống phát triển mạnh [3]."},
+			{q: "Quá trình thực vật tổng hợp đường glucose từ khí CO2, nước và năng lượng gọi là gì?", a: ["Hô hấp", "Quang hợp", "Thoát hơi nước", "Hóa tổng hợp"], c: 1, n: "Bé Sen nhắc bạn: Đây là kiến thức quan trọng về sự sống của cây cối [5]."}
+		],
+		"bài 7": [
+			{
+				q: "Hệ tư tưởng nào trở thành hệ tư tưởng và đạo đức của giai cấp phong kiến Trung Quốc?", 
+				a: ["Phật giáo", "Nho giáo", "Đạo giáo", "Hồi giáo"], 
+				c: 1, 
+				n: "Từ thời Hán, Nho giáo đã trở thành hệ tư tưởng chính thống để duy trì trật tự xã hội [3]."
+			},
+			{
+				q: "Nho giáo chủ trương dùng yếu tố nào để cai trị và duy trì trật tự xã hội?", 
+				a: ["Pháp luật nghiêm khắc", "Sức mạnh quân sự", "Đạo đức", "Sự giàu có"], 
+				c: 2, 
+				n: "Nho giáo chủ trương dùng đạo đức để cai trị và duy trì trật tự xã hội [3]."
+			},
+			{
+				q: "Nội dung 'Tam cương' trong Nho giáo bao gồm các mối quan hệ nào?", 
+				a: ["Vua-tôi, Cha-con, Vợ-chồng", "Thầy-trò, Bạn bè, Anh em", "Lãnh chúa-Nông nô, Tư sản-Vô sản", "Tất cả đều sai"], 
+				c: 0, 
+				n: "Tam cương là 3 mối quan hệ cơ bản: vua – tôi, cha – con, chồng – vợ [3]."
+			},
+			{
+				q: "Ngũ thường trong tư tưởng Nho giáo bao gồm những đức tính nào?", 
+				a: ["Cần, Kiệm, Liêm, Chính, Dũng", "Nhân, Lễ, Nghĩa, Trí, Tín", "Công, Dung, Ngôn, Hạnh", "Trung, Hiếu, Tiết, Nghĩa"], 
+				c: 1, 
+				n: "Ngũ thường là 5 đức tính của người quân tử: nhân, lễ, nghĩa, trí, tín [3]."
+			},
+			{
+				q: "Thời kỳ nào được coi là đỉnh cao của thơ ca Trung Quốc?", 
+				a: ["Thời Tống", "Thời Minh", "Thời Đường", "Thời Thanh"], 
+				c: 2, 
+				n: "Thơ Đường được coi là đỉnh cao của thơ ca Trung Quốc, có giá trị lớn về nghệ thuật và hiện thực [4]."
+			},
+			{
+				q: "Ba nhà thơ được mệnh danh là 'ba cây đại thụ' của làng thơ Đường là ai?", 
+				a: ["Lý Bạch, Đỗ Phủ, Bạch Cư Dị", "Ngô Thừa Ân, Thi Nại Am, La Quán Trung", "Tào Tuyết Cần, Lục Du, Tô Đông Pha", "Lý Thế Dân, Chu Nguyên Chương, Khang Hy"], 
+				c: 0, 
+				n: "Lý Bạch, Đỗ Phủ và Bạch Cư Dị là ba tác giả tiêu biểu nhất của thời Đường [4]."
+			},
+			{
+				q: "Tác phẩm nào sau đây KHÔNG nằm trong 'Tứ đại danh tác' của văn học Trung Quốc?", 
+				a: ["Thủy hử", "Tam quốc diễn nghĩa", "Tây du ký", "Nam quốc sơn hà"], 
+				c: 3, 
+				n: "Tứ đại danh tác gồm: Thủy hử, Tam quốc diễn nghĩa, Tây du ký và Hồng lâu mộng [4]."
+			},
+			{
+				q: "Bộ sử ký nổi tiếng của sử gia Tư Mã Thiên ra đời dưới triều đại nào?", 
+				a: ["Nhà Hán", "Nhà Đường", "Nhà Tống", "Nhà Minh"], 
+				c: 0, 
+				n: "Bộ Sử ký của Tư Mã Thiên là tác phẩm lịch sử đồ sộ thời Hán [4]."
+			},
+			{
+				q: "Bộ bách khoa toàn thư đồ sộ nào được biên soạn dưới thời Minh?", 
+				a: ["Tứ khố toàn thư", "Vĩnh Lạc đại điển", "Đường thư", "Sử ký"], 
+				c: 1, 
+				n: "Vĩnh Lạc đại điển và Tứ khố toàn thư là những bộ bách khoa toàn thư rất lớn của Trung Quốc [4]."
+			},
+			{
+				q: "Công trình nào là quần thể cung điện lớn nhất và đẹp nhất Trung Quốc thời Minh - Thanh?", 
+				a: ["Vạn Lý Trường Thành", "Tử Cấm Thành (Bắc Kinh)", "Chùa Thiên Ninh", "Tháp Lâm Tằng"], 
+				c: 1, 
+				n: "Tử Cấm Thành là tiêu biểu cho kiến trúc cung điện phong kiến Trung Quốc [4, 5]."
+			},
+			{
+				q: "Người Việt Nam nào có đóng góp cực kỳ quan trọng trong việc thiết kế và xây dựng Tử Cấm Thành?", 
+				a: ["Nguyễn Trãi", "Nguyễn An", "Lương Thế Vinh", "Nguyễn Du"], 
+				c: 1, 
+				n: "Nguyễn An là người Việt tài giỏi được nhà Minh giao làm Tổng đốc công xây dựng Tử Cấm Thành [5]."
+			},
+			{
+				q: "Pho tượng Phật bằng đá cao nhất thế giới tại Trung Quốc nằm ở đâu?", 
+				a: ["Núi Thái Sơn", "Núi Lạc Sơn (Tứ Xuyên)", "Núi Ngũ Đài", "Núi Hoàng Sơn"], 
+				c: 1, 
+				n: "Pho tượng Phật trên núi Lạc Sơn cao hàng chục mét, thể hiện trình độ điêu khắc điêu luyện [4]."
+			},
+			{
+				q: "Nghệ thuật hội họa tiêu biểu nhất của Trung Quốc thời kỳ này là gì?", 
+				a: ["Tranh sơn dầu", "Tranh thủy mặc", "Tranh trừu tượng", "Tranh thêu tay"], 
+				c: 1, 
+				n: "Tranh thủy mặc là loại hình nghệ thuật nổi tiếng, thường kết hợp chặt chẽ với thư pháp [5]."
+			},
+			{
+				q: "Thư pháp là nghệ thuật gì trong văn hóa Trung Quốc?", 
+				a: ["Nghệ thuật múa", "Nghệ thuật viết chữ", "Nghệ thuật nặn tượng", "Nghệ thuật đánh đàn"], 
+				c: 1, 
+				n: "Nghệ thuật viết chữ (thư pháp) đạt đến trình độ cao và rất được coi trọng [4, 5]."
+			},
+			{
+				q: "Triều đại nhà Thanh cai trị Trung Quốc trong khoảng thời gian nào?", 
+				a: ["618 – 907", "960 – 1279", "1368 – 1644", "1644 – 1911"], 
+				c: 3, 
+				n: "Nhà Thanh là triều đại phong kiến cuối cùng của Trung Quốc [6]."
+			},
+			{
+				q: "Địa danh nào sau đây là kiến trúc tôn giáo tiêu biểu của Trung Quốc?", 
+				a: ["Tử Cấm Thành", "Chùa Thiên Ninh", "Thập Tam lăng", "Điện Kính Thiên"], 
+				c: 1, 
+				n: "Kiến trúc tôn giáo tiêu biểu có Chùa Thiên Ninh và Thập Tam lăng (kiến trúc lăng tẩm) [4]."
+			},
+			{
+				q: "Nguyễn An được người Trung Quốc thời Minh gọi là gì nhờ tài năng của mình?", 
+				a: ["Thần y", "Kì nhân", "Trạng Lường", "Thánh thơ"], 
+				c: 1, 
+				n: "Do tài năng kiệt xuất, Nguyễn An được người Trung Quốc bấy giờ gọi là 'kì nhân' [5]."
+			},
+			{
+				q: "Phụ nữ thời phong kiến Trung Quốc phải tuân theo những chuẩn mực nào của Nho giáo?", 
+				a: ["Tam cương, Ngũ thường", "Tam tòng, Tứ đức", "Lễ, Nghĩa, Trí, Tín", "Nhân, Lễ, Nghĩa"], 
+				c: 1, 
+				n: "Phụ nữ phải tuân theo Tam tòng (tại gia tòng phụ...) và Tứ đức (công, dung, ngôn, hạnh) [3]."
+			},
+			{
+				q: "Đỗ Phủ là nhà thơ nổi tiếng của triều đại nào?", 
+				a: ["Nhà Hán", "Nhà Đường", "Nhà Minh", "Nhà Thanh"], 
+				c: 1, 
+				n: "Đỗ Phủ là một nhà thơ hiện thực xuất sắc nhất thời Đường [4]."
+			},
+			{
+				q: "Thực vật tổng hợp đường glucose từ chất nào qua quá trình quang hợp?", 
+				a: ["Khí Oxy và muối", "Khí CO2, nước và năng lượng", "Đá và cát", "Đường và đạm"], 
+				c: 1, 
+				n: "Bé Sen nhắc bạn: Theo kiến thức KHTN, cây xanh cần CO2, nước và ánh sáng để thực hiện quang hợp tạo glucose [7]."
+			}
+		],
+		"bài 8": [
+			{q: "Sau khi vương triều A-sô-ca sụp đổ, Ấn Độ rơi vào tình trạng gì?", a: ["Thống nhất", "Phân liệt", "Bị người La Mã chiếm", "Thịnh trị"], c: 1, n: "Sau năm 232 TCN, Ấn Độ rơi vào tình trạng phân liệt suốt hơn 500 năm [1]."},
+			{q: "Vương triều Gúp-ta do ai thành lập vào năm 320?", a: ["A-sô-ca", "Sa-đra Gúp-ta I (Chandragupta I)", "Ba-bua", "A-cơ-ba"], c: 1, n: "Năm 320, Ấn Độ thống nhất lại dưới vương triều Gúp-ta do San-đra Gúp-ta I đứng đầu [1]."},
+			{q: "Dãy núi nào nằm ở phía bắc ngăn cách Ấn Độ với các vùng bên ngoài?", a: ["An-pơ", "U-ran", "Hi-ma-lay-a (Himalaya)", "An-đét"], c: 2, n: "Phía bắc Ấn Độ là dãy Hi-ma-lay-a hùng vĩ [1]."},
+			{q: "Hai con sông nào cung cấp phù sa cho sự phát triển của nông nghiệp Ấn Độ?", a: ["Sông Nin và sông Công-gô", "Sông Ấn và sông Hằng", "Sông Hoàng Hà và Trường Giang", "Sông Mê Công và sông Đồng Nai"], c: 1, n: "Đồng bằng sông Ấn và sông Hằng cung cấp nguồn phù sa màu mỡ [1]."},
+			{q: "Vương triều Gúp-ta được coi là thời kỳ gì trong lịch sử Ấn Độ?", a: ["Thời kỳ đen tối", "Thời kỳ nô lệ", "Thời kỳ định hình và phát triển văn hóa truyền thống", "Thời kỳ công nghiệp"], c: 2, n: "Đây là thời kỳ phát triển rực rỡ và định hình văn hóa truyền thống Ấn Độ [1, 2]."},
+			{q: "Nghề thủ công nào ở Ấn Độ thời Gúp-ta đạt đến đỉnh cao?", a: ["Dệt vải", "Luyện kim (đặc biệt là luyện sắt)", "Làm đồ sứ", "Đóng thuyền buồm"], c: 1, n: "Nghề luyện sắt Ấn Độ đạt đến trình độ cao, tiêu biểu là cột sắt Đê-li [3]."},
+			{q: "Cột sắt Đê-li (Delhi) có đặc điểm gì nổi bật khiến thế giới kinh ngạc?", a: ["Làm bằng vàng ròng", "Bị rỉ sét nhanh chóng", "Trải qua hơn 1 600 năm vẫn không bị rỉ", "Rất nhẹ"], c: 2, n: "Cột sắt cao 7,25m, nặng 6 600kg, được đúc từ thế kỷ V nhưng vẫn không bị rỉ [3]."},
+			{q: "Trong xã hội thời Gúp-ta, chế độ nào vẫn tiếp tục tồn tại?", a: ["Chế độ dân chủ", "Chế độ cộng sản", "Chế độ đẳng cấp", "Chế độ đa đảng"], c: 2, n: "Chế độ đẳng cấp tiếp tục tồn tại, thể hiện rõ vị trí xã hội của mỗi người [2]."},
+			{q: "Tôn giáo nào là tôn giáo chính thống ở Ấn Độ thời kỳ này?", a: ["Phật giáo", "Thiên Chúa giáo", "Hin-đu (Hindu) giáo", "Hồi giáo"], c: 2, n: "Hin-đu giáo là tôn giáo chính thống ở Ấn Độ [2]."},
+			{q: "Trung tâm giáo dục bậc cao nào ở Ấn Độ thu hút học viên suốt thời kỳ Gúp-ta?", a: ["Trường Oxford", "Trường Sorbonne", "Đại học Phật giáo Na-lan-đa (Nalanda)", "Đại học Bô-lô-na"], c: 2, n: "Đại học Phật giáo Na-lan-đa là nơi dạy cả kinh Vệ-đa, triết học Hin-đu giáo, ngữ pháp, y học [2]."},
+			{q: "Ngôn ngữ nào đạt đến mức hoàn thiện và được sử dụng rộng rãi trong văn học?", a: ["Tiếng Anh", "Tiếng Phạn (Sanskrit)", "Tiếng Trung", "Tiếng A-rập"], c: 1, n: "Chữ Phạn đạt đến mức hoàn thiện và được dùng phổ biến trong văn thơ [2, 4]."},
+			{q: "Ai là tác giả của tác phẩm văn học nổi tiếng 'Sơ-kun-tơ-la'?", a: ["Đan-tê", "W. Sếch-xpia", "Ka-li-đa-sa (Kalidasa)", "Nguyễn Du"], c: 2, n: "Ka-li-đa-sa là nhà văn xuất sắc nhất với kiệt tác Shakuntala [2]."},
+			{q: "Người Ấn Độ thời Gúp-ta đã có giả thuyết gì về Trái Đất?", a: ["Trái Đất hình vuông", "Trái Đất hình cầu và tự quay quanh trục", "Trái Đất là trung tâm vũ trụ", "Trái Đất phẳng"], c: 1, n: "Họ phát hiện bóng Trái Đất hình tròn trên Mặt Trăng và đưa ra thuyết Trái Đất hình cầu [2, 5]."},
+			{q: "Thành tựu y học nào tiêu biểu của các thầy thuốc thời Gúp-ta?", a: ["Phẫu thuật và biết làm vắc-xin", "Tìm ra vi khuẩn", "Chế tạo máy X-quang", "Ghép tạng nhân tạo"], c: 0, n: "Thầy thuốc thời này đã biết phẫu thuật, khử trùng vết thương và tạo vắc-xin [5]."},
+			{q: "Quần thể hang động nào là kiệt tác kiến trúc và hội họa tiêu biểu thời kỳ này?", a: ["Ăng-co Vát", "Hang A-gian-ta (Ajanta)", "Tử Cấm Thành", "Ta-giơ Ma-han"], c: 1, n: "Hang A-gian-ta nổi tiếng với những bức họa màu sắc rực rỡ vẽ trên tường [5]."},
+			{q: "Đền Đa-sa-va-ta-ra là công trình tiêu biểu của tôn giáo nào?", a: ["Phật giáo", "Hin-đu giáo", "Đạo giáo", "Hồi giáo"], c: 1, n: "Đền Đa-sa-va-ta-ra (Dashavatara) thể hiện phong cách kiến trúc Hin-đu giáo [5]."},
+			{q: "Vương triều Gúp-ta bị chia nhỏ và kết thúc vào năm nào?", a: ["Năm 320", "Năm 476", "Năm 535", "Năm 1206"], c: 2, n: "Đầu thế kỷ VI, người Hung Nô tràn vào xâm lược khiến vương triều bị chia nhỏ và kết thúc năm 535 [3]."},
+			{q: "Người Hung Nô tràn vào xâm lược Bắc Ấn Độ vào thời gian nào?", a: ["Thế kỷ I", "Thế kỷ IV", "Đầu thế kỷ VI", "Thế kỷ X"], c: 2, n: "Đầu thế kỷ VI, những người Hung Nô và các tộc người ở Trung Á tràn vào xâm lược [3]."},
+			{q: "Đất nước Ấn Độ còn được gọi bằng tên vị thuỷ tổ nào?", a: ["Gúp-ta", "Bha-ra-ta (Bharata)", "A-sô-ca", "Sa-đra"], c: 1, n: "Tên đất nước Ấn Độ (tiếng Hin-đi) là Bha-ra-ta, được gọi theo tên vị thuỷ tổ này [2]."},
+			{q: "(Câu hỏi liên môn) Thực vật tổng hợp đường glucose từ khí CO2, nước và năng lượng qua quá trình nào?", a: ["Hô hấp", "Quang hợp", "Thoát hơi nước", "Lên men"], c: 1, n: "Bé Sen nhắc bạn: Đây là quá trình quang hợp, giúp thực vật tồn tại và phát triển [6]."}
+		],
+		"bài 9": [
+			{q: "Vương triều Hồi giáo Đê-li được thành lập vào năm nào?", a: ["Năm 320", "Năm 1206", "Năm 1526", "Năm 1556"], c: 1, n: "Năm 1206, người Hồi giáo gốc Thổ Nhĩ Kỳ chiếm miền Bắc Ấn Độ và lập ra vương triều này [3]."},
+			{q: "Người tộc nào đã thành lập nên vương triều Hồi giáo Đê-li?", a: ["Người Mông Cổ", "Người Anh", "Người Thổ Nhĩ Kỳ", "Người Hán"], c: 2, n: "Vương triều do người Hồi giáo gốc Thổ Nhĩ Kỳ thiết lập sau khi chiếm miền Bắc Ấn [3]."},
+			{q: "Kinh đô của vương triều Hồi giáo đầu tiên ở Ấn Độ đặt tại đâu?", a: ["A-gra", "Trường An", "Đê-li (Delhi)", "Pa-li-pút-tra"], c: 2, n: "Vương triều lấy Đê-li làm kinh đô [3]."},
+			{q: "Vương triều Đê-li sụp đổ vào đầu thế kỷ nào?", a: ["Thế kỷ XIII", "Thế kỷ XIV", "Thế kỷ XV", "Thế kỷ XVI"], c: 3, n: "Sang đầu thế kỉ XVI, vương triều sụp đổ trước sự tấn công của người Mông Cổ [3]."},
+			{q: "Thương nhân Ấn Độ thời Đê-li trao đổi hàng hóa mạnh nhất với khu vực nào?", a: ["Châu Âu", "Trung Á và Tây Á", "Châu Mỹ", "Đông Nam Á"], c: 1, n: "Thương nhân Ấn Độ đem vải vóc, trang sức, gia vị đổi lấy ngựa chiến từ Trung Á và Tây Á [3]."},
+			{q: "Tầng lớp nào vẫn được xem là đẳng cấp cao nhất trong xã hội thời Đê-li?", a: ["Bà La Môn", "Nông dân", "Thương nhân", "Nô lệ"], c: 0, n: "Dù chính trị thay đổi, đẳng cấp Bà La Môn vẫn được xem là cao nhất [3]."},
+			{q: "Người dân Ấn Độ không theo Hồi giáo thời kỳ này phải nộp loại thuế gì?", a: ["Thuế quân điền", "Thuế ngoại đạo", "Thuế thân", "Thuế tô"], c: 1, n: "Những cư dân không theo Hồi giáo phải nộp thuế ngoại đạo, gây ra sự bất bình [3]."},
+			{q: "Tôn giáo nào được truyền bá và áp đặt mạnh mẽ tại Ấn Độ dưới thời Đê-li?", a: ["Phật giáo", "Hồi giáo", "Hin-đu giáo", "Đạo giáo"], c: 1, n: "Vương triều Đê-li đã truyền bá và áp đặt đạo Hồi vào Ấn Độ [4]."},
+			{q: "Công trình kiến trúc nào là biểu tượng của nghệ thuật Hồi giáo tại Ấn Độ?", a: ["Ta-giơ Ma-han", "Tháp Cu-túp Mi-na (Kutub Minar)", "Chùa Một Cột", "Ăng-co Vát"], c: 1, n: "Kutub Minar là phức hợp kiến trúc tiêu biểu với tháp cao và mái vòm [4]."},
+			{q: "Tháp Cu-túp Mi-na cao bao nhiêu mét?", a: ["50 mét", "73 mét", "100 mét", "120 mét"], c: 1, n: "Ngôi tháp này cao 73 mét, xây dựng từ thế kỉ XII - XIII [4]."},
+			{q: "Ngôn ngữ nào trở thành ngôn ngữ chính thức của Ấn Độ thời Đê-li?", a: ["Tiếng Phạn", "Tiếng Ba Tư", "Tiếng Hindi", "Tiếng Anh"], c: 1, n: "Chữ Ba Tư được nhập vào và trở thành ngôn ngữ chính thức của triều đình [4]."},
+			{q: "Nhà văn, nhà thơ lớn của dân tộc Ấn Độ sống vào cuối thời Đê-li là ai?", a: ["Ka-li-đa-sa", "Ka-bi (Kabir)", "Tư Mã Thiên", "Nguyễn Trãi"], c: 1, n: "Ka-bi (1440 - 1518) là nhà văn, nhà thơ nổi tiếng với các tác phẩm viết bằng ngôn ngữ Hin-đi [4]."},
+			{q: "Nội dung chính trong các tác phẩm của Ka-bi là gì?", a: ["Ca ngợi chiến tranh", "Ngợi ca lòng trung thực, tinh thần khoan dung", "Kể về các vị vua", "Dạy cách làm giàu"], c: 1, n: "Tác phẩm của ông ngợi ca lòng trung thực, sống lương thiện và tinh thần khoan dung [4]."},
+			{q: "Kiến trúc Hồi giáo thường có đặc điểm gì?", a: ["Mái chùa hình rồng", "Tháp cao, mái vòm, sân rộng, họa tiết chữ A-rập cổ", "Nhà sàn gỗ", "Tượng Phật bằng đồng"], c: 1, n: "Đặc trưng là tháp cao, mái vòm, cửa vòm, sân rộng và họa tiết trang trí bằng chữ A-rập cổ [4]."},
+			{q: "Sự bất bình về tôn giáo và thuế khóa dẫn đến hệ quả gì?", a: ["Kinh tế phát triển", "Các cuộc đấu tranh làm vương triều Đê-li suy yếu", "Dân số tăng nhanh", "Sự ra đời của đạo giáo mới"], c: 1, n: "Sự phân biệt đối xử tôn giáo dẫn đến nhiều cuộc đấu tranh, làm suy yếu vương triều [3]."},
+			{q: "Đồng tiền lưu hành dưới thời thịnh trị của Đê-li thường làm bằng gì?", a: ["Đồng và Bạc", "Vàng và Kim cương", "Giấy", "Gỗ"], c: 0, n: "Hình ảnh tư liệu cho thấy đồng tiền lưu hành làm từ kim loại như đồng và bạc [3]."},
+			{q: "Nghề thủ công nghiệp nào phát triển dưới thời Đê-li?", a: ["Đúc súng", "Dệt vải, làm đồ trang sức", "Chế tạo máy hơi nước", "Đóng tàu sân bay"], c: 1, n: "Nhiều ngành thủ công nghiệp truyền thống phát triển, đặc biệt là dệt và làm trang sức [3]."},
+			{q: "Hệ thống kênh đào và hồ chứa nước thời kỳ này có vai trò gì?", a: ["Dùng để đi du lịch", "Phát triển nông nghiệp", "Làm đẹp kinh đô", "Nuôi cá mập"], c: 1, n: "Nhà nước cho đào thêm kênh và hồ chứa nước để hỗ trợ nông nghiệp [3]."},
+			{q: "Vương triều Đê-li đã tạo ra sự hòa nhập văn hóa giữa các yếu tố nào?", a: ["Văn hóa Á và Mỹ", "Văn hóa Hồi giáo và văn hóa Ấn Độ bản địa", "Văn hóa Việt và Trung", "Văn hóa Pháp và Ý"], c: 1, n: "Đây là thời kỳ có sự tiếp xúc mạnh mẽ giữa nền văn minh Ấn Độ và văn minh Hồi giáo [3, 4]."},
+			{q: "Thực vật lấy khí gì từ môi trường để thực hiện quang hợp?", a: ["Khí Oxy", "Khí CO2", "Khí Nitơ", "Khí Hidro"], c: 1, n: "Bé Sen nhắc bạn: Theo kiến thức KHTN, cây cối lấy khí CO2, nước và năng lượng để quang hợp [5]."},
+		],
+		"bài 10": [
+			{q: "Đế quốc Mô-gôn được thành lập sau khi lật đổ vương triều nào?", a: ["Vương triều Gúp-ta", "Vương triều Đê-li", "Nhà Đường", "Nhà Lý"], c: 1, n: "Đầu thế kỷ XVI, người Mông Cổ lật đổ vương triều Đê-li và lập nên đế quốc Mô-gôn [6]."},
+			{q: "Vị hoàng đế kiệt xuất nhất của đế quốc Mô-gôn là ai?", a: ["Ba-bua", "A-cơ-ba (Akbar)", "Sa Gia-han", "Lý Thái Tổ"], c: 1, n: "A-cơ-ba (trị vì 1556 - 1605) là vị vua đưa đế quốc bước vào giai đoạn thịnh trị nhất [6]."},
+			{q: "Chính sách nổi bật của vua A-cơ-ba về tôn giáo là gì?", a: ["Cấm đoán người Hin-đu", "Hòa hợp dân tộc và tôn giáo", "Ép mọi người theo Hồi giáo", "Xóa bỏ mọi tôn giáo"], c: 1, n: "Ông thực hiện nhiều biện pháp hòa hợp tôn giáo và tộc người [7]."},
+			{q: "Trong cải cách hành chính, vua A-cơ-ba đã làm gì?", a: ["Chỉ dùng người thân trong họ", "Đích thân bổ nhiệm tất cả quan chức kể cả vùng xa xôi", "Chia nhỏ đất nước", "Bỏ qua luật pháp"], c: 1, n: "Hoàng đế đích thân bổ nhiệm tất cả quan chức, kể cả những vùng xa xôi, hẻo lánh [7]."},
+			{q: "Vua A-cơ-ba đã bãi bỏ loại thuế nào để thể hiện sự công bằng tôn giáo?", a: ["Thuế nông nghiệp", "Thuế thân đánh vào người không theo Hồi giáo", "Thuế thương mại", "Thuế đất"], c: 1, n: "Ông đã bãi bỏ thuế thân đánh vào người theo Hồi giáo (thực chất là người ngoại đạo) [7]."},
+			{q: "Công trình đá trắng được mệnh danh là 'Lăng mộ đẹp nhất thế gian'?", a: ["Tháp Cu-túp Mi-na", "Ta-giơ Ma-han (Taj Mahal)", "Thạt Luổng", "Tử Cấm Thành"], c: 1, n: "Ta-giơ Ma-han là kiệt tác kiến trúc được xây dựng thời đế quốc Mô-gôn [8]."},
+			{q: "Lăng Ta-giơ Ma-han được xây dựng tại thành phố nào?", a: ["Đê-li", "A-gra", "Mumbai", "Bắc Kinh"], c: 1, n: "Lăng mộ này nằm ở thành phố A-gra, Ấn Độ [8]."},
+			{q: "Nghệ thuật hội họa đặc trưng của thời kỳ Mô-gôn là gì?", a: ["Tranh sơn dầu", "Tranh thâu nhỏ (miniature)", "Tranh thủy mặc", "Tranh lụa"], c: 1, n: "Hội họa Mô-gôn nổi tiếng với những bức tranh thâu nhỏ đầy màu sắc [8]."},
+			{q: "Tác phẩm 'Ram-ma-cha-ri-ta Ma-na-sa' là của nhà thơ nào?", a: ["Ka-bi", "Tu-n-xi Đa-xơ (Tulasidasa)", "Shakespeare", "Nguyễn Du"], c: 1, n: "Nhà thơ Tu-n-xi Đa-xơ nổi tiếng với các tác phẩm về thần Ra-ma [7]."},
+			{q: "Thư viện khổng lồ thời vua A-cơ-ba có khoảng bao nhiêu cuốn sách?", a: ["1.000 cuốn", "10.000 cuốn", "24.000 cuốn", "100.000 cuốn"], c: 2, n: "Vua A-cơ-ba đã xây một thư viện khổng lồ với 24 000 cuốn sách [7]."},
+			{q: "Vị vua nào đã xây dựng lăng Ta-giơ Ma-han?", a: ["A-cơ-ba", "Ba-bua", "Sa Gia-han (Shah Jahan)", "Khang Hy"], c: 2, n: "Vua Sa Gia-han đã xây dựng lăng mộ này cho hoàng hậu Mum-ta [8]."},
+			{q: "Chất liệu chính tạo nên vẻ đẹp của lăng Ta-giơ Ma-han là gì?", a: ["Gạch nung", "Gỗ quý", "Đá trắng", "Vàng ròng"], c: 2, n: "Lăng Ta-giơ Ma-han được xây dựng bằng đá trắng [8]."},
+			{q: "Mục đích cải cách của vua A-cơ-ba là gì?", a: ["Để đi đánh trận", "Ổn định xã hội, phát triển kinh tế, quyền lực tuyệt đối", "Để tìm vàng", "Để dời đô"], c: 1, n: "Cải cách giúp nền chính trị ổn định, quyền lực vua được củng cố và kinh tế hàng hóa phát triển [7]."},
+			{q: "Đơn vị đo lường và tiền tệ dưới thời Mô-gôn như thế nào?", a: ["Mỗi vùng một kiểu", "Thống nhất trên toàn quốc", "Sử dụng tiền của Anh", "Không dùng tiền"], c: 1, n: "Vua A-cơ-ba đã thống nhất hệ thống đo lường và tiền tệ [7]."},
+			{q: "Thành Đỏ La Ki-la (Lal Qila) nằm ở đâu?", a: ["A-gra", "Đê-li", "Mumbai", "Hoa Lư"], c: 1, n: "Thành Đỏ La Ki-la nằm ở Đê-li là một trong những thành tựu kiến trúc tiêu biểu [8]."},
+			{q: "Thời kỳ A-cơ-ba cai trị được xem là thời kỳ gì của đế quốc Mô-gôn?", a: ["Thời kỳ đen tối", "Thịnh trị nhất", "Thời kỳ bắt đầu suy yếu", "Thời kỳ bị xâm lược"], c: 1, n: "Thời kỳ vua A-cơ-ba được xem là thịnh trị nhất của đế quốc Mô-gôn [6]."},
+			{q: "Ai là người sáng lập ra đế quốc Mô-gôn?", a: ["A-cơ-ba", "Ba-bua (Babur)", "Hốt Tất Liệt", "Lê Lợi"], c: 1, n: "Ba-bua là người đầu tiên thiết lập vương triều này sau khi lật đổ Đê-li [6]."},
+			{q: "Nội dung hội họa Mô-gôn thường mô tả điều gì?", a: ["Phong cảnh châu Âu", "Sự kiện lịch sử, cuộc sống cung đình và tầng lớp quý tộc", "Chỉ vẽ hoa lá", "Chỉ vẽ thần linh"], c: 1, n: "Tranh thường mô tả sự kiện lịch sử, cuộc sống cung đình và quý tộc [8]."},
+			{q: "Vua A-cơ-ba thực hiện đo đạc lại yếu tố nào để quản lý kinh tế?", a: ["Đo chiều cao người dân", "Đo đạc lại ruộng đất", "Đo độ sâu của biển", "Đo khoảng cách tới Mặt Trăng"], c: 1, n: "Ông cho thực hiện đo đạc lại ruộng đất để quản lý nông nghiệp tốt hơn [7]."},
+			{q: "Lens flare (lóe sáng ống kính) thường xảy ra khi nào?", a: ["Khi chụp ảnh trong bóng tối", "Khi hướng camera về nguồn sáng mạnh", "Khi máy hết pin", "Khi ống kính bị vỡ"], c: 1, n: "Bé Sen nhắc bạn: Đây là hiện tượng lóe sáng khi camera đối diện với nguồn sáng đặc biệt mạnh [5]."}
+		],
+		"bài 11": [
+			{q: "Giai đoạn từ nửa sau thế kỉ X đến nửa đầu thế kỉ XVI được coi là giai đoạn gì của Đông Nam Á?", a: ["Hình thành", "Suy vong", "Thống nhất và phát triển thịnh vượng", "Bị thực dân xâm lược"], c: 2, n: "Đây là thời kì phát triển thịnh vượng của các quốc gia phong kiến khu vực Đông Nam Á [3, 5]."},
+			{q: "Vương quốc Pa-gan (Bagan) là tiền thân của quốc gia nào ngày nay?", a: ["Thái Lan", "Mi-an-ma", "Lào", "Cam-pu-chia"], c: 1, n: "Vương quốc Pa-gan hình thành và phát triển mạnh mẽ trên lãnh thổ Mi-an-ma ngày nay [3]."},
+			{q: "Vương quốc hải đảo nào từng đóng vai trò là trung tâm kinh tế, văn hóa quan trọng trước thế kỉ XIII?", a: ["Ăng-co", "Pa-gan", "S-ri Vi-giay-a", "Đại Việt"], c: 2, n: "S-ri Vi-giay-a là một vương quốc hải đảo lớn, thống nhất và phát triển trước thế kỉ X [3]."},
+			{q: "Sự kiện quan trọng nào ở thế kỉ XIII đã gây ra những biến động lớn tại Đông Nam Á?", a: ["Cuộc phát kiến địa lý", "Sự xâm lược của quân Mông - Nguyên", "Sự ra đời của đạo Phật", "Sự sụp đổ của đế chế La Mã"], c: 1, n: "Thế kỉ XIII, cuộc xâm lược của quân Mông - Nguyên đã làm thay đổi bản đồ chính trị khu vực [4, 5]."},
+			{q: "Vương quốc Su-khô-thay và A-út-thay-a là tiền thân của quốc gia nào?", a: ["Lào", "Thái Lan", "Mi-an-ma", "In-đô-nê-xi-a"], c: 1, n: "Các quốc gia nói tiếng Thái như Su-khô-thay và A-út-thay-a đã hình thành và phát triển rực rỡ [5]."},
+			{q: "Vương quốc Mô-giô-pa-hít (Majapahit) thống nhất phần lớn các đảo thuộc quốc gia nào ngày nay?", a: ["Phi-líp-pin", "Ma-lay-xi-a", "In-đô-nê-xi-a", "Việt Nam"], c: 2, n: "Mô-giô-pa-hít ra đời cuối thế kỉ XIII và thống nhất phần lớn các đảo thuộc In-đô-nê-xi-a ngày nay [5]."},
+			{q: "Vương quốc Ma-lắc-ca (Malacca) được thành lập trên cơ sở sự phân liệt của vương quốc nào?", a: ["S-ri Vi-giay-a", "Mô-giô-pa-hít", "Pa-gan", "Ăng-co"], c: 1, n: "Đầu thế kỉ XV, Ma-lắc-ca được thành lập trên cơ sở sự phân liệt của Mô-giô-pa-hít [5]."},
+			{q: "Nền tảng kinh tế chính của các quốc gia như A-út-thay-a, Cam-pu-chia, Đại Việt là gì?", a: ["Thương nghiệp biển", "Nông nghiệp lúa nước", "Sản xuất đồ sứ", "Chăn nuôi du mục"], c: 1, n: "Nông nghiệp lúa nước vẫn là ngành kinh tế trụ cột của các quốc gia lục địa [5]."},
+			{q: "Thành phố Ma-lắc-ca vào thế kỉ XV được ví như một chốn như thế nào?", a: ["Hoang vắng", "Trung tâm nông nghiệp", "Đô hội phồn hoa bậc nhất thế giới", "Vùng biên cương"], c: 2, n: "Ma-lắc-ca là trung tâm giao thương sầm uất, thu hút thương nhân khắp thế giới [5, 6]."},
+			{q: "Tôn giáo nào bắt đầu du nhập mạnh mẽ vào Đông Nam Á hải đảo từ thế kỉ XIII?", a: ["Phật giáo", "Nho giáo", "Hồi giáo", "Thiên Chúa giáo"], c: 2, n: "Từ thế kỉ XIII, Hồi giáo du nhập và trở thành quốc giáo của nhiều vương quốc vùng hải đảo [4, 5]."},
+			{q: "Tác phẩm văn học 'Bình Ngô đại cáo' là thành tựu của quốc gia nào vào thế kỉ XV?", a: ["Lào", "Cam-pu-chia", "Đại Việt", "Mi-an-ma"], c: 2, n: "Bình Ngô đại cáo của Nguyễn Trãi là kiệt tác văn học thế kỉ XV của Đại Việt [4]."},
+			{q: "Phật giáo phát triển rực rỡ và trở thành quốc giáo ở những vương quốc nào?", a: ["Pa-gan, Đại Việt, Cam-pu-chia", "Ma-lắc-ca, Mô-giô-pa-hít", "Đức, Pháp, Ý", "Ấn Độ, Ba Tư"], c: 0, n: "Phật giáo là quốc giáo và chi phối đời sống văn hóa tại các quốc gia lục địa [4]."},
+			{q: "Vào thời gian này, Đông Nam Á đã hình thành những quần thể kiến trúc đồ sộ nào?", a: ["Tử Cấm Thành", "Ăng-co Vát, Pa-gan, Thăng Long", "Kim tự tháp Giza", "Đấu trường La Mã"], c: 1, n: "Những quần thể kiến trúc này là minh chứng cho sự phát triển rực rỡ của nghệ thuật khu vực [4]."},
+			{q: "Dòng sử học Đại Việt đạt thành tựu lớn với bộ quốc sử nào ở thế kỉ XIII?", a: ["Sử ký của Tư Mã Thiên", "Đại Việt sử ký của Lê Văn Hưu", "Bình Ngô đại cáo", "Riêm Kê"], c: 1, n: "Đại Việt sử ký (1272) là bộ chính sử đầu tiên của nước ta [4]."},
+			{q: "Nghệ thuật điêu khắc đá của Cam-pu-chia nổi tiếng với những bức chạm khắc ở đâu?", a: ["Chùa Pa-gan", "Hoàng thành Thăng Long", "Đền Ăng-co Vát và Bay-on", "Vạn Lý Trường Thành"], c: 2, n: "Người Khơ-me đạt trình độ bậc thầy trong nghệ thuật điêu khắc đá [4, 7]."},
+			{q: "Các quốc gia Đông Nam Á đã chặn đứng cuộc xâm lược của quân đội nào ở thế kỉ XIII?", a: ["Thực dân Pháp", "Đế chế La Mã", "Quân Mông - Nguyên", "Người Giéc-man"], c: 2, n: "Quân dân các nước như Đại Việt đã dũng cảm chiến thắng sức mạnh của Mông - Nguyên [5, 8]."},
+			{q: "Tại sao nói Đông Nam Á là cầu nối giữa hai đại dương lớn?", a: ["Nằm giữa Ấn Độ Dương và Thái Bình Dương", "Nằm giữa Đại Tây Dương và Bắc Băng Dương", "Nằm giữa châu Âu và châu Mỹ", "Tất cả đều sai"], c: 0, n: "Vị trí địa lý giúp Đông Nam Á trở thành trạm dừng chân lý tưởng cho các tuyến đường biển [9]."},
+			{q: "Sản phẩm nào là 'tinh túy' của Đông Nam Á thu hút thương nhân phương Tây?", a: ["Dầu mỏ", "Máy hơi nước", "Gia vị, hương liệu, lụa, gốm", "Sắt và than đá"], c: 2, n: "Các mặt hàng tơ lụa và hương liệu của phương Đông luôn kích thích thương nhân châu Âu [6, 10]."},
+			{q: "Hiện tượng 'Lens flare' (lóe sáng) xảy ra khi camera đối diện với yếu tố nào?", a: ["Bóng tối", "Nguồn sáng đặc biệt mạnh", "Nước", "Cây xanh"], c: 1, n: "Bé Sen nhắc bạn kiến thức KHTN: Đây là hiện tượng phản chiếu khi hướng ống kính vào nguồn sáng mạnh [11]."},
+			{q: "Quá trình thực vật tổng hợp đường glucose từ CO2, nước và năng lượng gọi là?", a: ["Hô hấp", "Thoát nước", "Quang hợp", "Lên men"], c: 2, n: "Quá trình này giúp cây cối xung quanh chúng ta tồn tại và phát triển [11]."}
+		],
+		"bài 12": [
+			{
+				q: "Người có công thống nhất lãnh thổ và lập ra triều đại Ăng-co vào năm 802 là ai?", 
+				a: ["Giay-a-vác-man VII", "Giay-a-vác-man II", "Pha Ngừm", "Suryavarman II"], 
+				c: 1, 
+				n: "Năm 802, Giay-a-vác-man II lên ngôi vua, củng cố sức mạnh và lập ra triều đại Ăng-co [1]."
+			},
+			{
+				q: "Theo truyền thuyết, tên nước Cam-pu-chia (Kambuja) được ghép từ tên của ai?", 
+				a: ["Kambu và Mera", "Lạc Long Quân và Âu Cơ", "Pha Ngừm và Mera", "Kambu và Ăng-co"], 
+				c: 0, 
+				n: "Tên tộc người Khơ-me và tên nước được ghép từ hai vị tổ tiên huyền thoại là Kambu và Mera [1]."
+			},
+			{
+				q: "Thời kỳ Ăng-co trong lịch sử Cam-pu-chia kéo dài trong khoảng thời gian nào?", 
+				a: ["Thế kỷ IX đến thế kỷ XIII", "802 - 1432", "Thế kỷ X đến thế kỷ XVI", "1353 - 1707"], 
+				c: 1, 
+				n: "Thời kỳ Ăng-co kéo dài từ năm 802 đến năm 1432 [1]."
+			},
+			{
+				q: "Sự kiện nào diễn ra vào năm 1432 khiến người Khơ-me phải rời bỏ kinh đô Ăng-co?", 
+				a: ["Nạn đói hoành hành", "Người Thái tấn công và cướp phá", "Dịch bệnh bùng phát", "Cuộc nội chiến đẫm máu"], 
+				c: 1, 
+				n: "Do sự tấn công và cướp phá liên tục của người Thái, năm 1432 họ phải rời bỏ Ăng-co dời về phía nam [1]."
+			},
+			{
+				q: "Ngành kinh tế nào đóng vai trò chủ đạo của vương quốc Cam-pu-chia thời Ăng-co?", 
+				a: ["Thương nghiệp biển", "Nông nghiệp", "Thủ công nghiệp", "Khai thác lâm sản"], 
+				c: 1, 
+				n: "Nông nghiệp là ngành kinh tế chủ yếu của vương quốc thời kỳ này [2]."
+			},
+			{
+				q: "Hệ thống thủy lợi Baray Tây ở kinh đô Ăng-co có khả năng tưới cho bao nhiêu ruộng?", 
+				a: ["10 000 ha", "70 000 ha", "100 000 ha", "150 000 ha"], 
+				c: 1, 
+				n: "Hồ thủy lợi phía tây kinh đô rộng lớn, có thể tưới cho khoảng 70 000 ha ruộng [2]."
+			},
+			{
+				q: "Vị vua nào được coi là kiệt xuất nhất, đã cho xây dựng 102 bệnh viện trên khắp lãnh thổ?", 
+				a: ["Giay-a-vác-man II", "Giay-a-vác-man VII", "Xet-tha-thi-lát", "Pha Ngừm"], 
+				c: 1, 
+				n: "Vua Giay-a-vác-man VII (trị vì 1181 - 1220) đã đưa vương quốc đạt đỉnh cao và rất quan tâm đến đời sống dân chúng [2]."
+			},
+			{
+				q: "Vùng nào được gọi là 'Vành cung thịnh vượng' của Cam-pu-chia thời kỳ này?", 
+				a: ["Lưu vực sông Mê Công", "Khu vực Biển Hồ (Tonle Sap)", "Vùng núi phía Bắc", "Vùng ven biển phía Nam"], 
+				c: 1, 
+				n: "Biển Hồ là nơi có nguồn thủy sản dồi dào và đất đai màu mỡ, dân cư đông đúc nhất [3]."
+			},
+			{
+				q: "Loại chữ viết nào được người Cam-pu-chia sử dụng phổ biến trong văn học và khắc trên bia?", 
+				a: ["Chữ Hán", "Chữ Phạn (Sanskrit)", "Chữ Nôm", "Chữ La-tinh"], 
+				c: 1, 
+				n: "Người Cam-pu-chia sớm có chữ viết và sử dụng phổ biến chữ Phạn cùng chữ Khơ-me cổ [3]."
+			},
+			{
+				q: "Tác phẩm văn học dân gian truyền thơ nổi tiếng nhất của Cam-pu-chia là?", 
+				a: ["Riêm Kê (Reamker)", "Ra-ma-ya-na", "Sơ-kun-tơ-la", "Bình Ngô đại cáo"], 
+				c: 0, 
+				n: "Riêm Kê là tác phẩm văn học rất phong phú, mang đậm bản sắc văn hóa Cam-pu-chia [3]."
+			},
+			{
+				q: "Vào khoảng đầu thế kỷ XIII, tôn giáo nào bắt đầu du nhập và chiếm ưu thế tại Cam-pu-chia?", 
+				a: ["Hin-đu giáo", "Đạo Phật", "Hồi giáo", "Thiên Chúa giáo"], 
+				c: 1, 
+				n: "Từ đầu thế kỷ XIII, đạo Phật bắt đầu du nhập và thay thế dần Hin-đu giáo [3]."
+			},
+			{
+				q: "Công trình kiến trúc đá vĩ đại nhất được xây dựng vào thế kỷ XII là gì?", 
+				a: ["Ăng-co Thom", "Ăng-co Vát (Angkor Wat)", "Thạt Luổng", "Chùa Xiêng Thông"], 
+				c: 1, 
+				n: "Ăng-co Vát là kiệt tác kiến trúc đá rực rỡ nhất của người Khơ-me xây dựng vào thế kỷ XII [3]."
+			},
+			{
+				q: "Vật liệu chính tạo nên sự bền vững của các đền tháp Ăng-co đến ngày nay là gì?", 
+				a: ["Gỗ quý", "Gạch nung", "Đá", "Đồng"], 
+				c: 2, 
+				n: "Người Khơ-me đạt trình độ bậc thầy trong việc xây dựng và chạm khắc trên đá [3]."
+			},
+			{
+				q: "Hình ảnh ngôi đền Ăng-co Vát xuất hiện ở đâu trong các biểu tượng quốc gia ngày nay?", 
+				a: ["Tiền giấy", "Quốc kỳ Cam-pu-chia", "Huy hiệu quân đội", "Tất cả các phương án trên"], 
+				c: 1, 
+				n: "Ngôi đền Ăng-co Vát là niềm tự hào dân tộc và được đưa vào trung tâm quốc kỳ Cam-pu-chia [3]. "
+			},
+			{
+				q: "Người Khơ-me cổ thường viết trên vật liệu gì trước khi có giấy?", 
+				a: ["Lá cọ", "Vỏ cây", "Đá", "Lá sen"], 
+				c: 0, 
+				n: "Những bản kinh và văn bản cổ thường được viết trên lá cọ [3]."
+			},
+			{
+				q: "Sản phẩm thủ công nghiệp nào của người Khơ-me được trao đổi mạnh thời kỳ này?", 
+				a: ["Máy hơi nước", "Đồ gốm, trang sức", "Vũ khí hiện đại", "Tơ lụa Trung Hoa"], 
+				c: 1, 
+				n: "Người Khơ-me rất khéo tay trong các nghề làm đồ gốm, làm đồ trang sức và xây đền [2]."
+			},
+			{
+				q: "Theo video KHTN, thực vật lấy chất gì từ môi trường để thực hiện quá trình quang hợp?", 
+				a: ["Khí Oxy và đường", "Khí CO2, nước và năng lượng", "Muối khoáng và cát", "Chỉ cần ánh sáng"], 
+				c: 1, 
+				n: "Bé Sen nhắc bạn: Cây cối cần lấy khí CO2, nước và năng lượng ánh sáng để quang hợp [4]."
+			},
+			{
+				q: "Quá trình thực vật tổng hợp đường glucose được gọi là gì?", 
+				a: ["Hô hấp", "Quang hợp", "Thoát hơi nước", "Hóa tổng hợp"], 
+				c: 1, 
+				n: "Bé Sen nhắc bạn: Đây là quá trình quan trọng để thực vật tạo ra chất dinh dưỡng cho mình [4]."
+			},
+			{
+				q: "Hiện tượng 'Ghostly eclipse images' (hình ảnh nhật thực ma quái) trong camera thực chất là gì?", 
+				a: ["Linh hồn", "Lens flares (Lóe sáng ống kính)", "Nhật thực thật", "Lỗi phần mềm"], 
+				c: 1, 
+				n: "Bé Sen nhắc bạn: Đó là hiện tượng lóe sáng khi camera hướng về nguồn sáng đặc biệt mạnh [4]."
+			},
+			{
+				q: "Vương quốc Cam-pu-chia đạt đỉnh cao thịnh vượng nhất vào thời kỳ nào?", 
+				a: ["Thời hậu Ăng-co", "Thời Ăng-co", "Thời Chân Lạp", "Thời thuộc Pháp"], 
+				c: 1, 
+				n: "Thời kỳ Ăng-co (thế kỷ IX - XV) là giai đoạn phát triển rực rỡ nhất về mọi mặt [1], [2]."
+			}
+	],
+	"bài 13": [
+		{
+			q: "Chủ nhân đầu tiên của nền văn hóa cánh đồng Chum trên đất nước Lào là ai?", 
+			a: ["Người Lào Lùm", "Người Lào Thơng", "Người Thái", "Người Khơ-me"], 
+			c: 1, 
+			n: "Từ xa xưa, người Lào Thơng đã sinh sống và là chủ nhân của nền văn hóa cánh đồng Chum [2]."
+		},
+		{
+			q: "Người có công thống nhất các mường Lào và thành lập nước Lan Xang vào năm 1353 là ai?", 
+			a: ["Pha Ngừm (Fa Ngum)", "Xet-tha-thi-lát", "Giay-a-vác-man II", "Lê Lợi"], 
+			c: 0, 
+			n: "Năm 1353, một tộc trưởng tên là Pha Ngừm đã thống nhất các tộc Lào và lên ngôi vua [3]."
+		},
+		{
+			q: "Tên gọi 'Lan Xang' của vương quốc Lào có nghĩa là gì?", 
+			a: ["Đất nước Vàng", "Vương quốc Triệu Voi", "Đất nước lúa nước", "Vùng đất Phật giáo"], 
+			c: 1, 
+			n: "Lan Xang có nghĩa là Triệu Voi, phản ánh sức mạnh quân sự thời kỳ bấy giờ [3]."
+		},
+		{
+			q: "Kinh đô đầu tiên của vương quốc Lan Xang được đặt tại đâu?", 
+			a: ["Viêng Chăn", "Mường Xoa (Luông Pha-bang)", "A-gra", "Ăng-co"], 
+			c: 1, 
+			n: "Kinh đô ban đầu được đặt tại Mường Xoa, sau này mới chuyển về Viêng Chăn [3]."
+		},
+		{
+			q: "Vào năm 1560, vị vua nào đã quyết định dời đô về Viêng Chăn?", 
+			a: ["Pha Ngừm", "Xet-tha-thi-lát (Settathirath)", "Ba-bua", "A-cơ-ba"], 
+			c: 1, 
+			n: "Vua Xet-tha-thi-lát đã dời đô từ Mường Xoa về Viêng Chăn vào năm 1560 [3]."
+		},
+		{
+			q: "Vương quốc Lan Xang đạt đến giai đoạn thịnh vượng nhất trong khoảng thời gian nào?", 
+			a: ["Thế kỷ X - XIII", "Thế kỷ XV - XVII", "Thế kỷ XIX", "Năm 802 - 1432"], 
+			c: 1, 
+			n: "Vương quốc Lào từng bước phát triển và đạt đến sự thịnh vượng trong các thế kỉ XV – XVII [3]."
+		},
+		{
+			q: "Ngành kinh tế nào đóng vai trò chủ đạo của cư dân Lào thời kỳ này?", 
+			a: ["Thương nghiệp biển", "Nông nghiệp (trồng lúa nếp)", "Khai thác dầu mỏ", "Chế tạo máy móc"], 
+			c: 1, 
+			n: "Cư dân Lào chủ yếu trồng lúa nếp, kết hợp với các nghề thủ công truyền thống [3]."
+		},
+		{
+			q: "Người Lào cổ thường trao đổi mặt hàng nào với các nước láng giềng?", 
+			a: ["Vàng và các sản phẩm thủ công", "Máy hơi nước", "Tàu chiến", "Lúa mì"], 
+			c: 0, 
+			n: "Lào trao đổi hàng hóa với láng giềng, nổi tiếng là khai thác vàng từ cát suối [3]."
+		},
+		{
+			q: "Năm 1565, quân dân Lan Xang đã dũng cảm chiến thắng cuộc xâm lược của quân đội nào?", 
+			a: ["Quân Mông Cổ", "Quân Miến Điện (Mi-an-ma)", "Thực dân Pháp", "Đế quốc La Mã"], 
+			c: 1, 
+			n: "Năm 1565, họ đã chiến thắng quân xâm lược Miến Điện để bảo vệ độc lập [3]."
+		},
+		{
+			q: "Tôn giáo nào là cơ sở để thống nhất các bộ tộc và ảnh hưởng lớn đến văn hóa Lào?", 
+			a: ["Hin-đu giáo", "Hồi giáo", "Phật giáo", "Thiên Chúa giáo"], 
+			c: 2, 
+			n: "Phật giáo là cơ sở để thống nhất các bộ tộc Lào và chi phối đời sống tinh thần [3]."
+		},
+		{
+			q: "Công trình kiến trúc nào là biểu tượng Phật giáo đồ sộ nhất của Lào được xây dựng năm 1566?", 
+			a: ["Ăng-co Vát", "Thạt Luổng (That Luang)", "Chùa Xiêng Thông", "Tháp Cu-túp Mi-na"], 
+			c: 1, 
+			n: "Thạt Luổng xây dựng năm 1566 tại Viêng Chăn là công trình kiến trúc tiêu biểu của Lào [2], [3]."
+		},
+		{
+			q: "Chùa Xiêng Thông nằm ở cố đô nào của Lào?", 
+			a: ["Viêng Chăn", "Luông Pha-bang", "Pa-gan", "Thăng Long"], 
+			c: 1, 
+			n: "Chùa Xiêng Thông (chùa thành phố Vàng) nằm tại Luông Pha-bang [3]."
+		},
+		{
+			q: "Chữ viết của người Lào ra đời vào khoảng thế kỷ XIV có đặc điểm gì?", 
+			a: ["Chữ vuông", "Các nét chữ cong", "Chữ La-tinh", "Chữ Nôm"], 
+			c: 1, 
+			n: "Vào khoảng thế kỉ XIV, chữ Lào ra đời với các nét chữ cong [4]."
+		},
+		{
+			q: "Điệu múa truyền thống nổi tiếng của người dân Lào là điệu múa nào?", 
+			a: ["Múa A-psa-ra", "Múa Lăm-vông (Lam Vong)", "Múa Sạp", "Múa Quạt"], 
+			c: 1, 
+			n: "Người Lào nổi tiếng với điệu hát Lăm và điệu múa Lăm-vông truyền thống [4]."
+		},
+		{
+			q: "Tác phẩm văn học nổi tiếng nhất của Lào thời kỳ này là?", 
+			a: ["Riêm Kê", "Sơ-kun-tơ-la", "Trường ca Xín Xay", "Bình Ngô đại cáo"], 
+			c: 2, 
+			n: "Trường ca Xín Xay là một trong những tác phẩm văn học lớn của Lào [4]."
+		},
+		{
+			q: "Theo truyền thuyết, các tộc người Lào 'chui ra' từ bộ phận nào của người mẹ?", 
+			a: ["Bàn tay", "Một quả bầu mẹ", "Đôi mắt", "Đóa sen"], 
+			c: 1, 
+			n: "Truyền thuyết kể rằng các tộc người lần lượt 'chui ra' từ một quả bầu mẹ [2]."
+		},
+		{
+			q: "Thực vật sử dụng khí CO2, nước và năng lượng để tổng hợp chất gì quan trọng?", 
+			a: ["Muối khoáng", "Đường glucose", "Chất đạm", "Cát"], 
+			c: 1, 
+			n: "Bé Sen nhắc bạn kiến thức KHTN: Cây xanh tổng hợp đường glucose qua quá trình quang hợp [1]."
+		},
+		{
+			q: "Hiện tượng 'ghostly eclipse images' (hình ảnh nhật thực ma quái) trong camera là gì?", 
+			a: ["Linh hồn", "Lens flares (Lóe sáng ống kính)", "Nhật thực thật", "Lỗi chip xử lý"], 
+			c: 1, 
+			n: "Đó thực chất là hiện tượng lóe sáng khi camera hướng về nguồn sáng mạnh [1]."
+		},
+		{
+			q: "Sản phẩm thủ công truyền thống nào của Lào được nhắc đến nhiều trong sử liệu?", 
+			a: ["Đóng tàu sân bay", "Dệt vải, làm dao rựa bằng sắt", "Sản xuất ô tô", "Chế tạo kính viễn vọng"], 
+			c: 1, 
+			n: "Người Lào giỏi các nghề truyền thống như dệt vải, làm dao rựa sắt và đồ mây tre [3]."
+		},
+		{
+			q: "Mục đích chính của việc xây dựng hồ thủy lợi Baray Tây (Cam-pu-chia) là gì?", 
+			a: ["Để nuôi cá", "Để tưới cho 70.000 ha ruộng", "Để làm đẹp kinh đô", "Để tắm cho voi"], 
+			c: 1, 
+			n: "Hệ thống thủy lợi khổng lồ này giúp nông nghiệp phát triển cực thịnh [5]."
+		}
+	],
+	"bài 14": [
+		{q: "Sau chiến thắng Bạch Đằng năm 938, Ngô Quyền đã chọn nơi nào làm kinh đô?", a: ["Hoa Lư", "Cổ Loa", "Đại La", "Thăng Long"], c: 1, n: "Năm 939, Ngô Quyền lên ngôi vua và đóng đô ở Cổ Loa (nay thuộc Đông Anh, Hà Nội) [4]."},
+		{q: "Ngô Quyền đã bãi bỏ chức vụ nào của chính quyền đô hộ phương Bắc?", a: ["Hoàng đế", "Tiết độ sứ", "Thái thú", "Thứ sử"], c: 1, n: "Ngô Quyền xưng vương và bãi bỏ chức Tiết độ sứ để khẳng định nền độc lập [4]."},
+		{q: "Sau khi Ngô Quyền mất (944), tình hình đất nước rơi vào trạng thái gì?", a: ["Thịnh trị", "Bị quân Tống chiếm", "Loạn 12 sứ quân", "Thời kỳ Nam Bắc triều"], c: 2, n: "Năm 965, chính quyền nhà Ngô tan rã, đất nước lâm vào tình trạng cát cứ, gọi là 'Loạn 12 sứ quân' [5]."},
+		{q: "Ai là người có công dẹp loạn 12 sứ quân, thống nhất đất nước?", a: ["Ngô Xương Ngập", "Đinh Bộ Lĩnh", "Lê Hoàn", "Nguyễn Bặc"], c: 1, n: "Đinh Bộ Lĩnh đã sử dụng sức mạnh quân sự kết hợp biện pháp mềm dẻo để dẹp yên các sứ quân [5]."},
+		{q: "Đinh Bộ Lĩnh được nhân dân suy tôn là danh hiệu gì?", a: ["Bình Tây Đại Nguyên Soái", "Vạn Thắng Vương", "Lê Đại Hành", "Thái Thượng hoàng"], c: 1, n: "Nhờ tài cầm quân, Đinh Bộ Lĩnh được tôn là Vạn Thắng Vương [5]."},
+		{q: "Năm 968, Đinh Bộ Lĩnh lên ngôi Hoàng đế và đặt tên nước là gì?", a: ["Vạn Xuân", "Đại Cồ Việt", "Đại Việt", "Đại Ngu"], c: 1, n: "Đinh Tiên Hoàng đặt tên nước là Đại Cồ Việt, đóng đô ở Hoa Lư [6]."},
+		{q: "Niên hiệu đầu tiên trong lịch sử nước ta dưới thời vua Đinh Tiên Hoàng là gì?", a: ["Thuận Thiên", "Thái Bình", "Thiên Phúc", "Hồng Đức"], c: 1, n: "Năm 970, vua đặt niên hiệu là Thái Bình và đúc tiền đồng đầu tiên [6]."},
+		{q: "Lê Hoàn lên ngôi vua (Lê Đại Hành) trong bối cảnh nào?", a: ["Được vua Đinh nhường ngôi", "Quân Tống đang lăm le xâm lược", "Dẹp loạn sứ quân", "Thắng trận trên sông Như Nguyệt"], c: 1, n: "Năm 979, nhà Đinh rối ren, quân Tống chuẩn bị xâm lược, triều đình đã suy tôn Lê Hoàn lên ngôi vua để lãnh đạo kháng chiến [6]."},
+		{q: "Cuộc kháng chiến chống quân xâm lược Tống diễn ra vào năm nào?", a: ["Năm 938", "Năm 981", "Năm 1010", "Năm 1075"], c: 1, n: "Cuộc kháng chiến chống Tống do Lê Hoàn trực tiếp lãnh đạo diễn ra vào đầu năm 981 [7]."},
+		{q: "Trận đánh quyết định chiến thắng quân Tống năm 981 diễn ra ở đâu?", a: ["Ải Chi Lăng", "Sông Bạch Đằng và Lục Đầu Giang", "Thành Đa Bang", "Cửa biển Vân Đồn"], c: 1, n: "Lê Hoàn tổ chức mai phục và chặn đánh địch ở Bạch Đằng và Lục Đầu Giang, tướng giặc Hầu Nhân Bảo bị tiêu diệt [7]."},
+		{q: "Dưới thời Đinh - Tiền Lê, chính quyền địa phương cấp cao nhất được gọi là?", a: ["Đạo (lộ)", "Phủ", "Châu", "Giáp"], c: 0, n: "Đinh Tiên Hoàng chia nước thành các đạo, đến năm 1002 vua Lê đổi đạo thành lộ, phủ, châu [7]."},
+		{q: "Chính sách quân đội đặc trưng nào được thực hiện thời Ngô - Đinh - Tiền Lê?", a: ["Ngụ binh ư nông", "Chủ động tấn công", "Quân đội thường trực toàn phần", "Chặn đường tiếp viện"], c: 0, n: "Chính sách 'Ngụ binh ư nông' gửi quân về làm ruộng khi không có chiến tranh được áp dụng để đảm bảo sản xuất [8]."},
+		{q: "Tôn giáo nào phát triển rộng rãi và được coi trọng dưới thời Ngô - Đinh - Tiền Lê?", a: ["Nho giáo", "Đạo Phật", "Thiên Chúa giáo", "Hồi giáo"], c: 1, n: "Nho giáo chưa phát triển, Đạo Phật được truyền bá rộng rãi; nhiều nhà sư tham gia quản lý đất nước [8]."},
+		{q: "Bà Phạm Thị Trân được biết đến là người đầu tiên trong lịch sử nước ta làm nghề gì?", a: ["Bác sĩ", "Quản lý giáo dục", "Dạy hát múa (Hát chèo)", "Chỉ huy cấm quân"], c: 2, n: "Bà là người phụ trách dạy hát múa trong quân đội thời nhà Đinh, tổ nghề của nghệ thuật chèo [8]."},
+		{q: "Kinh đô Hoa Lư được mệnh danh là vùng đất của loại hình nghệ thuật nào?", a: ["Múa rối nước", "Sân khấu chèo", "Đờn ca tài tử", "Hát xoan"], c: 1, n: "Nhiều loại hình dân gian phát triển, đặc biệt Hoa Lư là đất tổ của sân khấu chèo [8]."},
+		{q: "Địa danh nào sau đây là quê hương của cả Ngô Quyền và Phùng Hưng?", a: ["Hoa Lư", "Đường Lâm", "Cổ Loa", "Luy Lâu"], c: 1, n: "Lịch sử gọi Đường Lâm là vùng đất 'hai vua' vì đây là nơi sinh của Ngô Quyền và Phùng Hưng [4]."},
+		{q: "Vua nào đã tổ chức lễ cày ruộng Tịch điền để khuyến khích nông nghiệp?", a: ["Ngô Quyền", "Đinh Tiên Hoàng", "Lê Đại Hành (Lê Hoàn)", "Đinh Toàn"], c: 2, n: "Năm 987, vua Lê Đại Hành tổ chức lễ cày tịch điền ở Đọi Sơn để làm gương cho dân [9]."},
+		{q: "Đơn vị hành chính nhỏ nhất thời Đinh - Tiền Lê là?", a: ["Xã", "Giáp", "Huyện", "Châu"], c: 0, n: "Hệ thống hành chính được tổ chức đến tận đơn vị cơ sở là xã [7]."},
+		{q: "Cây cối lấy khí gì từ môi trường để thực hiện quá trình quang hợp?", a: ["Khí Oxy", "Khí CO2", "Khí Nitơ", "Khí Hidro"], c: 1, n: "Bé Sen nhắc bạn: Thực vật sử dụng khí CO2, nước và năng lượng để tổng hợp đường glucose [3]."},
+		{q: "Hiện tượng 'lens flare' xảy ra khi camera gặp điều kiện gì?", a: ["Bóng tối hoàn toàn", "Nguồn sáng đặc biệt mạnh", "Ống kính bị bẩn", "Máy hết pin"], c: 1, n: "Bé Sen nhắc bạn: Đây là hiện tượng lóe sáng hoặc vệt sáng xuất hiện khi camera đối diện nguồn sáng mạnh [3]."}
+	],
+       "bài 15": [
+		{
+			q: "Vương triều nhà Lý được thành lập vào năm nào?", 
+			a: ["Năm 1005", "Năm 1009", "Năm 1010", "Năm 1054"], 
+			c: 1, 
+			n: "Năm 1009, sau khi vua Lê Long Đĩnh mất, triều thần suy tôn Lý Công Uẩn lên ngôi vua, nhà Lý được thành lập [4]."
+		},
+		{
+			q: "Lý Công Uẩn (vua Lý Thái Tổ) quyết định dời đô từ Hoa Lư về Đại La vào năm nào?", 
+			a: ["1009", "1010", "1042", "1075"], 
+			c: 1, 
+			n: "Mùa thuận năm 1010, vua Lý Thái Tổ quyết định dời đô từ Hoa Lư về thành Đại La và đổi tên thành Thăng Long [4]."
+		},
+		{
+			q: "Tại sao Lý Thái Tổ lại chọn Đại La để đóng đô?", 
+			a: ["Vì đây là vùng núi hiểm trở", "Vì thế đất rộng, bằng phẳng, thuận lợi giao thương", "Vì gần quê hương nhà vua", "Vì quân Tống yêu cầu"], 
+			c: 1, 
+			n: "Đại La nằm ở trung tâm đất nước, thế rồng cuộn hổ ngồi, đất đai cao ráo, bằng phẳng, muôn vật tươi tốt thịnh vượng [5]."
+		},
+		{
+			q: "Vị vua nào đã đổi tên nước thành Đại Việt vào năm 1054?", 
+			a: ["Lý Thái Tổ", "Lý Thái Tông", "Lý Thánh Tông", "Lý Nhân Tông"], 
+			c: 2, 
+			n: "Năm 1054, vua Lý Thánh Tông lên ngôi và đổi tên nước là Đại Việt [5]."
+		},
+		{
+			q: "Bộ luật thành văn đầu tiên của nước ta có tên là gì?", 
+			a: ["Luật Hồng Đức", "Hình thư", "Luật Gia Long", "Hình luật"], 
+			c: 1, 
+			n: "Năm 1042, nhà Lý ban hành bộ Hình thư - bộ luật thành văn đầu tiên của Việt Nam [6]."
+		},
+		{
+			q: "Chính sách quân đội đặc trưng nào tiếp tục được duy trì thời Lý?", 
+			a: ["Chủ động tấn công", "Ngụ binh ư nông", "Quân đội thường trực", "Cấm quân"], 
+			c: 1, 
+			n: "Nhà Lý thực hiện chính sách 'ngụ binh ư nông', cho quân sĩ luân phiên vừa luyện tập vừa cày ruộng để đảm bảo sản xuất [6]."
+		},
+		{
+			q: "Cuộc kháng chiến chống quân xâm lược Tống dưới thời Lý diễn ra vào năm nào?", 
+			a: ["981", "1010", "1075 - 1077", "1226"], 
+			c: 2, 
+			n: "Cuộc kháng chiến chống Tống diễn ra kịch liệt trong giai đoạn 1075 - 1077 [6]."
+		},
+		{
+			q: "Chủ trương của Lý Thường Kiệt trong cuộc kháng chiến chống Tống (1075) là gì?", 
+			a: ["Phòng ngự bị động", "Ngồi yên đợi giặc", "Chủ động tiến công để phòng vệ", "Kêu gọi hòa bình"], 
+			c: 2, 
+			n: "Ông nhận định: 'Ngồi yên đợi giặc, không bằng đem quân đánh trước để chặn thế mạnh của giặc' [6]."
+		},
+		{
+			q: "Phòng tuyến quan trọng nào đã chặn đứng quân Tống vào đầu năm 1077?", 
+			a: ["Sông Bạch Đằng", "Sông Hồng", "Sông Như Nguyệt", "Lục Đầu Giang"], 
+			c: 2, 
+			n: "Quân dân nhà Lý đã xây dựng phòng tuyến bên bờ nam sông Như Nguyệt để chặn đánh 10 vạn quân Tống [7]."
+		},
+		{
+			q: "Tác phẩm nào được mệnh danh là 'Bản tuyên ngôn độc lập đầu tiên' của nước ta?", 
+			a: ["Chiếu dời đô", "Bình Ngô đại cáo", "Nam quốc sơn hà", "Hịch tướng sĩ"], 
+			c: 2, 
+			n: "Bài thơ thần 'Nam quốc sơn hà' vang lên trên sông Như Nguyệt đã khích lệ tinh thần binh sĩ kháng chiến [8]."
+		},
+		{
+			q: "Lễ cày ruộng Tịch điền của các vua nhà Lý nhằm mục đích gì?", 
+			a: ["Để biểu diễn võ thuật", "Khuyến khích nhân dân sản xuất nông nghiệp", "Để dâng lễ vật cho thần linh", "Để tuyển chọn quan lại"], 
+			c: 1, 
+			n: "Hằng năm, vua trực tiếp thực hiện lễ cày Tịch điền để làm gương và khuyến khích nông dân trồng trọt [8]."
+		},
+		{
+			q: "Thương cảng nào sầm uất nhất thời Lý, nơi trao đổi hàng hóa với nước ngoài?", 
+			a: ["Hội Thống", "Quảng Yên", "Vân Đồn", "Thăng Long"], 
+			c: 2, 
+			n: "Vân Đồn (Quảng Ninh) là cảng biển quan trọng, thu hút nhiều thuyền buôn các nước Đông Nam Á và Trung Quốc [9]."
+		},
+		{
+			q: "Nhà Lý cho xây dựng Văn Miếu vào năm nào để thờ Khổng Tử?", 
+			a: ["1010", "1042", "1070", "1076"], 
+			c: 2, 
+			n: "Năm 1070, vua Lý Thánh Tông cho xây dựng Văn Miếu ở Thăng Long [10]."
+		},
+		{
+			q: "Quốc Tử Giám - trường đại học đầu tiên của nước ta được thành lập vào năm nào?", 
+			a: ["1054", "1070", "1075", "1076"], 
+			c: 3, 
+			n: "Năm 1076, nhà Lý mở Quốc Tử Giám để dạy học cho con em quý tộc, quan lại [10]."
+		},
+		{
+			q: "Kỳ thi đầu tiên để tuyển chọn người tài vào bộ máy nhà nước được mở vào năm?", 
+			a: ["1010", "1075", "1076", "1149"], 
+			c: 1, 
+			n: "Năm 1075, nhà Lý mở khoa thi đầu tiên để tuyển chọn quan lại [10]."
+		},
+		{
+			q: "Công trình kiến trúc độc đáo nào thời Lý mô phỏng đóa hoa sen nở trên mặt nước?", 
+			a: ["Tháp Báo Thiên", "Chùa Một Cột (Chùa Diên Hựu)", "Tháp Phổ Minh", "Văn Miếu"], 
+			c: 1, 
+			n: "Chùa Diên Hựu (Một Cột) là công trình nghệ thuật độc đáo được xây dựng dưới thời nhà Lý [11]."
+		},
+		{
+			q: "Tôn giáo nào chiếm vị trí ưu thế và được coi trọng nhất thời Lý?", 
+			a: ["Nho giáo", "Đạo Phật", "Hồi giáo", "Thiên Chúa giáo"], 
+			c: 1, 
+			n: "Thời Lý, đạo Phật rất thịnh hành, các nhà sư thường được tham gia bàn việc nước [11]."
+		},
+		{
+			q: "Sản phẩm thủ công tiêu biểu nào của làng Nghi Tàm còn được bảo tồn đến nay?", 
+			a: ["Gốm sứ", "Đồ đồng", "Lụa truyền thống", "Giấy"], 
+			c: 2, 
+			n: "Làng Nghi Tàm nổi tiếng với nghề dệt lụa và chăn tằm từ thời nhà Lý [9]."
+		},
+		{
+			q: "Thực vật lấy khí gì và nước để thực hiện quá trình quang hợp tạo glucose?", 
+			a: ["Khí Oxy", "Khí CO2", "Khí Nitơ", "Khí Hidro"], 
+			c: 1, 
+			n: "Bé Sen nhắc bạn kiến thức KHTN: Cây cối cần lấy khí CO2, nước và năng lượng ánh sáng để quang hợp [3]."
+		},
+		{
+			q: "Hiện tượng 'lens flare' trong camera thường xuất hiện khi nào?", 
+			a: ["Khi chụp ảnh trong bóng tối", "Khi hướng camera về nguồn sáng mạnh", "Khi camera bị hết pin", "Khi ống kính bị mờ"], 
+			c: 1, 
+			n: "Bé Sen nhắc bạn: Đó là hiện tượng lóe sáng khi bạn hướng ống kính trực tiếp vào nguồn sáng đặc biệt mạnh [3]."
+		}
+	],
+	"bài 16": [
+		{q: "Vương triều nhà Trần chính thức bắt đầu vào năm nào?", a: ["Năm 1009", "Năm 1225", "Năm 1226", "Năm 1400"], c: 2, n: "Đầu năm 1226, Lý Chiêu Hoàng nhường ngôi cho chồng là Trần Cảnh, nhà Trần thành lập [1]."},
+		{q: "Ai là người có vai trò quyết định trong việc sắp xếp để nhà Trần thay thế nhà Lý?", a: ["Trần Thái Tông", "Trần Thủ Độ", "Trần Hưng Đạo", "Trần Nhân Tông"], c: 1, n: "Trần Thủ Độ là người có công sáng lập triều Trần, ông đã đạo diễn cuộc chuyển giao quyền lực giữa hai triều đại [1]."},
+		{q: "Chế độ đặc biệt nào được thực hiện trong nội bộ hoàng tộc để đảm bảo sự ổn định triều đình nhà Trần?", a: ["Vua nắm quyền tuyệt đối", "Chế độ Thái thượng hoàng", "Cha truyền con nối muộn", "Bầu chọn vua mới"], c: 1, n: "Các vua nhà Trần thường nhường ngôi sớm cho con, xưng là Thái thượng hoàng để cùng quản lý đất nước [2]."},
+		{q: "Cả nước thời Trần được chia thành bao nhiêu đơn vị hành chính cấp lộ?", a: ["10 lộ", "12 lộ", "13 lộ", "24 lộ"], c: 1, n: "Hệ thống chính quyền thời Trần được tổ chức chặt chẽ, cả nước chia thành 12 lộ và phủ [2]."},
+		{q: "Bộ luật thành văn quan trọng nào được ban hành dưới thời Trần?", a: ["Hình thư", "Luật Gia Long", "Quốc triều hình luật", "Luật Hồng Đức"], c: 2, n: "Nhà nước thời Trần ban hành bộ Quốc triều hình luật nhằm tăng cường pháp luật [2]."},
+		{q: "Chủ trương xây dựng quân đội của nhà Trần có điểm gì đặc biệt?", a: ["Quân đội càng đông càng tốt", "Binh lính cốt tinh nhuệ, không cốt đông", "Chỉ tuyển quân ở kinh đô", "Không dùng dân binh"], c: 1, n: "Nhà Trần chú trọng chất lượng hơn số lượng với chủ trương 'binh lính cốt tinh nhuệ, không cốt đông' [2]."},
+		{q: "Chính sách quân đội nào tiếp tục được duy trì từ thời Lý sang thời Trần?", a: ["Ngụ binh ư nông", "Chủ động tiến công", "Quân đội thường trực", "Cấm quân"], c: 0, n: "Chính sách 'ngụ binh ư nông' (gửi quân ở nhà nông) tiếp tục được thực hiện để đảm bảo sản xuất [2]."},
+		{q: "Trong nông nghiệp, nhà Trần đã thực hiện biện pháp gì để đối phó với lũ lụt?", a: ["Bỏ hoang ruộng đất", "Đắp đê phòng lụt (đê Quai Vạc)", "Chỉ trồng cây chịu nước", "Xây dựng kênh đào xuyên quốc gia"], c: 1, n: "Nhà Trần rất chú trọng thủy lợi, cho đắp đê phòng lụt dọc các con sông [3]."},
+		{q: "Thương cảng nào là nơi buôn bán sầm uất nhất thời Trần với thương nhân nước ngoài?", a: ["Quảng Châu", "Hội Thống", "Vân Đồn (Quảng Ninh)", "Hải Phòng"], c: 2, n: "Thuyền buôn ngoại quốc thường xuyên đến buôn bán ở cảng Vân Đồn và các cảng ven biển miền Trung [3]."},
+		{q: "Giai cấp/tầng lớp nào có vị trí thấp kém nhất trong xã hội thời Trần?", a: ["Nông dân", "Thợ thủ công", "Nô tì", "Thương nhân"], c: 2, n: "Nô tì là tầng lớp thấp nhất, chuyên phục vụ trong các gia đình quý tộc và quan lại [4]."},
+		{q: "Vị vua nào đã sáng lập ra Thiền phái Trúc Lâm Yên Tử?", a: ["Trần Thái Tông", "Trần Thánh Tông", "Trần Nhân Tông", "Trần Anh Tông"], c: 2, n: "Sau khi nhường ngôi cho con, vua Trần Nhân Tông xuất gia tu hành và sáng lập Thiền phái Trúc Lâm Yên Tử [4]."},
+		{q: "Tam khôi là danh hiệu dành cho ba người đỗ cao nhất trong kỳ thi nào?", a: ["Thi Hương", "Thi Hội", "Thi Đình", "Thi viện"], c: 2, n: "Từ thời Trần, triều đình định lệ thi Thái học sinh và chọn tam khôi (Trạng nguyên, Bảng nhãn, Thám hoa) trong kỳ thi Đình [5]."},
+		{q: "Ai là người đã biên soạn bộ 'Đại Việt sử ký' - bộ quốc sử đầu tiên của Việt Nam?", a: ["Ngô Sĩ Liên", "Lê Văn Hưu", "Trần Quốc Tuấn", "Trần Nhân Tông"], c: 1, n: "Lê Văn Hưu là người đầu tiên soạn bộ quốc sử Đại Việt sử ký (1272) gồm 30 quyển [5]."},
+		{q: "Tác phẩm quân sự 'Binh thư yếu lược' là của vị tướng tài ba nào?", a: ["Trần Quang Khải", "Trần Khánh Dư", "Trần Quốc Tuấn", "Phạm Ngũ Lão"], c: 2, n: "Về quân sự, Trần Quốc Tuấn nổi tiếng với tác phẩm Binh thư yếu lược [5]."},
+		{q: "Ai được tôn vinh là 'ông tổ của thuốc Nam' với nền y học truyền thống Việt Nam?", a: ["Hải Thượng Lãn Ông", "Tuệ Tĩnh", "Đặng Lộ", "Chu Văn An"], c: 1, n: "Thiền sư Tuệ Tĩnh là người đầu tiên xây dựng nền y học truyền thống của người Việt [5]."},
+		{q: "Tháp Phổ Minh, một công trình kiến trúc độc đáo thời Trần, nằm ở tỉnh nào ngày nay?", a: ["Hà Nội", "Vĩnh Phúc", "Nam Định", "Hưng Yên"], c: 2, n: "Tháp Phổ Minh (Nam Định) là một trong những kiệt tác nghệ thuật tiêu biểu thời bấy giờ [5, 6]."},
+		{q: "Loại hình nghệ thuật dân gian nào rất phát triển từ đình làng đến cung đình thời Trần?", a: ["Hát chèo và múa rối nước", "Đờn ca tài tử", "Hát xoan", "Múa A-psa-ra"], c: 0, n: "Hát chèo và múa rối nước rất phổ biến, nhiều nhạc cụ dân tộc cũng được dùng trong các ngày hội [6]."},
+		{q: "Vị quan có học vấn sâu sắc, được vua Trần trọng dụng và mời dạy học ở Quốc Tử Giám là ai?", a: ["Lê Văn Hưu", "Chu Văn An", "Trần Nguyên Đán", "Đặng Lộ"], c: 1, n: "Chu Văn An là người thầy mẫu mực, được mời làm tư nghiệp Quốc Tử Giám để dạy học cho con em quý tộc [5]."},
+		{q: "Thực vật lấy khí CO2, nước và năng lượng ánh sáng để tạo ra chất gì?", a: ["Khí Oxy", "Đường glucose", "Muối khoáng", "Nitơ"], c: 1, n: "Bé Sen nhắc bạn kiến thức KHTN: Quá trình quang hợp giúp cây tạo ra đường glucose để tồn tại [7]."},
+		{q: "Hiện tượng 'lens flare' xảy ra khi bạn hướng ống kính camera về đâu?", a: ["Bóng tối", "Nguồn sáng đặc biệt mạnh", "Nước", "Cây xanh"], c: 1, n: "Bé Sen nhắc bạn: Đó là hiện tượng lóe sáng hoặc các vệt disc xuất hiện khi camera đối diện nguồn sáng mạnh [7]."}
+	],
+	"bài 17": [
+		{q: "Cuộc kháng chiến chống quân xâm lược Mông Cổ lần thứ nhất diễn ra vào năm nào?", a: ["Năm 1257", "Năm 1258", "Năm 1285", "Năm 1287"], c: 1, n: "Tháng 1-1258, quân Mông Cổ bắt đầu tiến quân xâm lược Đại Việt [4]."},
+		{q: "Vị tướng nào chỉ huy 3 vạn quân Mông Cổ tiến vào Đại Việt năm 1258?", a: ["Thoát Hoan", "Toa Đô", "Ngột Lương Hợp Thai", "Ô Mã Nhi"], c: 2, n: "Ngột Lương Hợp Thai là người chỉ huy đạo quân Mông Cổ lần đầu tiên [4]."},
+		{q: "Câu nói: 'Đầu thần chưa rơi xuống đất, bệ hạ đừng lo gì khác' là của ai?", a: ["Trần Quốc Tuấn", "Trần Thủ Độ", "Trần Quang Khải", "Trần Khánh Dư"], c: 1, n: "Thái sư Trần Thủ Độ đã khẳng định điều này để trấn an vua Trần Thái Tông [5]."},
+		{q: "Kế sách nào được quân dân nhà Trần sử dụng xuyên suốt cả ba lần kháng chiến?", a: ["Chủ động tiến công", "Vườn không nhà trống", "Phòng ngự bị động", "Đóng cửa biên giới"], c: 1, n: "Nhà Trần thực hiện kế 'vườn không nhà trống', rút khỏi Thăng Long để địch rơi vào cảnh thiếu lương thực [4-6]."},
+		{q: "Trận thắng quyết định của quân dân nhà Trần trong lần kháng chiến thứ nhất là?", a: ["Trận Tây Kết", "Trận Hàm Tử", "Trận Đông Bộ Đầu", "Trận Bạch Đằng"], c: 2, n: "Ngày 29-1-1258, quân Trần tấn công lớn ở Đông Bộ Đầu, buộc quân Mông Cổ rút chạy [4]."},
+		{q: "Hội nghị Diên Hồng (1285) được triệu tập để hỏi ý kiến của ai?", a: ["Các vương tôn công tử", "Các vị tướng lĩnh", "Các bậc phụ lão", "Toàn thể nhân dân"], c: 2, n: "Vua Trần Nhân Tông triệu tập các phụ lão để bàn kế đánh giặc, thể hiện sự đoàn kết toàn dân [5]."},
+		{q: "Ai là người được vua Trần cử làm Quốc công tiết chế - Tổng chỉ huy các lực lượng kháng chiến?", a: ["Trần Thủ Độ", "Trần Quốc Tuấn", "Trần Quang Khải", "Trần Nhật Duật"], c: 1, n: "Trần Quốc Tuấn (Hưng Đạo Vương) là vị tổng chỉ huy tài ba của nhà Trần [5]."},
+		{q: "Vị tướng nào đã hy sinh dũng cảm với câu nói: 'Ta thà làm ma nước Nam, chứ không làm vương đất Bắc'?", a: ["Trần Thủ Độ", "Trần Bình Trọng", "Trần Khánh Dư", "Phạm Ngũ Lão"], c: 1, n: "Trần Bình Trọng bị bắt nhưng đã khẳng định khí tiết anh hùng của người dân nước Nam [7]."},
+		{q: "Chiến thắng lớn nào vào tháng 5-1285 đã giúp giải phóng kinh đô Thăng Long?", a: ["Đông Bộ Đầu", "Tây Kết, Hàm Tử, Chương Dương", "Vân Đồn", "Bạch Đằng"], c: 1, n: "Một loạt chiến thắng lẫy lừng đã giúp quét sạch quân Nguyên khỏi đất nước lần thứ hai [7]."},
+		{q: "Trong lần kháng chiến thứ ba (1287-1288), trận hải chiến nào đã làm tiêu tan đoàn thuyền lương của giặc?", a: ["Trận Bạch Đằng", "Trận Vân Đồn", "Trận Chương Dương", "Trận Hàm Tử"], c: 1, n: "Trần Khánh Dư đã chỉ huy quân mai phục và đánh tan đoàn thuyền lương của Ô Mã Nhi tại Vân Đồn [6]."},
+		{q: "Trận thắng quyết định kết thúc hoàn toàn mưu đồ xâm lược của nhà Nguyên diễn ra trên sông nào?", a: ["Sông Hồng", "Sông Mã", "Sông Bạch Đằng", "Sông Cầu"], c: 2, n: "Tháng 4-1288, trận địa cọc trên sông Bạch Đằng đã tiêu diệt toàn bộ quân thủy của giặc [6]."},
+		{q: "Tinh thần tự cường, đoàn kết của quân dân nhà Trần được gọi là gì?", a: ["Hào khí Lam Sơn", "Hào khí Đông A", "Tinh thần Lý Trần", "Hào khí Thăng Long"], c: 1, n: "Tên gọi 'Đông A' bắt nguồn từ việc chiết tự chữ 'Trần', biểu trưng cho sức mạnh quật cường thời đại đó [8]."},
+		{q: "Vua Nguyên (Hốt Tất Liệt) lập ra nhà Nguyên vào năm nào?", a: ["1258", "1271", "1279", "1285"], c: 1, n: "Năm 1271, Hốt Tất Liệt lập ra nhà Nguyên sau khi chiếm toàn bộ Trung Quốc [5]."},
+		{q: "Tác phẩm quân sự nổi tiếng nào của Trần Quốc Tuấn dùng để huấn luyện binh sĩ?", a: ["Hịch tướng sĩ", "Binh thư yếu lược", "Đại Việt sử ký", "Nam quốc sơn hà"], c: 1, n: "Trần Quốc Tuấn là tác giả của bộ 'Binh thư yếu lược' [9]."},
+		{q: "Vua nào của nhà Trần đã xuất gia tu hành và sáng lập Thiền phái Trúc Lâm Yên Tử?", a: ["Trần Thái Tông", "Trần Thánh Tông", "Trần Nhân Tông", "Trần Anh Tông"], c: 2, n: "Sau khi lãnh đạo kháng chiến thắng lợi, vua Trần Nhân Tông đã đi tu và trở thành vị Tổ thứ nhất của phái Trúc Lâm [10]."},
+		{q: "Nguyên nhân quan trọng nhất dẫn đến thắng lợi của ba lần kháng chiến là?", a: ["Sức mạnh quân đội", "Tài chỉ huy của tướng lĩnh", "Lòng yêu nước và sự đoàn kết của toàn dân", "Sự suy yếu của giặc"], c: 2, n: "Sự đồng lòng 'trên dưới một dạ, anh em hòa mục' là yếu tố tiên quyết [9]."},
+		{q: "Vua Trần Thái Tông đã trực tiếp chỉ huy trận đánh nào năm 1258?", a: ["Trận Bình Lệ Nguyên", "Trận Vân Đồn", "Trận Hàm Tử", "Trận Chương Dương"], c: 0, n: "Nhà vua đã trực tiếp cầm quân chặn giặc ở Bình Lệ Nguyên (Vĩnh Phúc) [4]."},
+		{q: "Sau chiến thắng năm 1289, vua Trần đã phong tước hiệu gì cho Hưng Đạo Vương?", a: ["Đại vương", "Hưng Đạo Đại vương", "Quốc công tiết chế", "Thái thượng hoàng"], c: 1, n: "Ghi nhận công lao to lớn, nhà vua đã phong tước hiệu cao quý cho ông [9]."},
+		{q: "Theo video KHTN, hiện tượng 'lens flare' (lóe sáng) xảy ra khi nào?", a: ["Khi camera hướng về bóng tối", "Khi hướng camera về nguồn sáng đặc biệt mạnh", "Khi camera bị hỏng ống kính", "Khi chụp ảnh dưới nước"], c: 1, n: "Bé Sen nhắc bạn: Đó là hiện tượng tạo ra các vệt sáng hoặc disc khi ống kính đối diện nguồn sáng mạnh [3]."},
+		{q: "Cây cối lấy khí CO2, nước và năng lượng để tạo ra chất gì quan trọng?", a: ["Muối khoáng", "Đường glucose", "Khí Nitơ", "Đất"], c: 1, n: "Bé Sen nhắc bạn: Quá trình quang hợp giúp thực vật tổng hợp đường glucose để tồn tại [3]."}
+	],
+	"bài 18": [
+		{
+			q: "Ai là người đã phế truất vua Trần và lập ra nhà Hồ vào năm 1400?", 
+			a: ["Hồ Nguyên Trừng", "Hồ Hán Thương", "Hồ Quý Ly", "Trần Khát Chân"], 
+			c: 2, 
+			n: "Năm 1400, Hồ Quý Ly phế truất vua Trần và lên làm vua, lập ra nhà Hồ [3]."
+		},
+		{
+			q: "Hồ Quý Ly đặt tên nước là Đại Ngu, từ 'Đại Ngu' có nghĩa là gì?", 
+			a: ["Sự ngu dốt", "Niềm vui lớn", "Vương quốc rồng", "Đất nước bình yên"], 
+			c: 1, 
+			n: "Hồ Quý Ly đổi tên nước là Đại Ngu, có nghĩa là niềm vui lớn [3]."
+		},
+		{
+			q: "Trước khi lên ngôi vua, Hồ Quý Ly đã giữ chức vụ cao nhất nào trong triều đình nhà Trần?", 
+			a: ["Tiết độ sứ", "Nhập nội phụ chính Thái sư Bình chương quân quốc trọng sự", "Thái thú", "Vạn Thắng Vương"], 
+			c: 1, 
+			n: "Năm 1394, ông nắm giữ chức Nhập nội phụ chính Thái sư Bình chương quân quốc trọng sự, tương đương với chức Tế tướng [3]."
+		},
+		{
+			q: "Nhà Hồ đã quyết định dời đô từ Thăng Long về địa danh nào ở Thanh Hóa?", 
+			a: ["Thành Đa Bang", "Thành Tây Đô (thành Tây Giai)", "Thành Cổ Loa", "Thành Hoa Lư"], 
+			c: 1, 
+			n: "Nhà Hồ đã dời đô về thành An Tôn, còn gọi là thành Tây Đô tại Thanh Hóa [4]."
+		},
+		{
+			q: "Loại tiền giấy đầu tiên của Việt Nam được nhà Hồ ban hành có tên là gì?", 
+			a: ["Thái Bình hưng bảo", "Thông bảo hội sao", "Thiên Phúc trấn bảo", "Cửu chân ngân phiếu"], 
+			c: 1, 
+			n: "Nhà Hồ đã cho ban hành tiền giấy mang tên 'Thông bảo hội sao' [4]."
+		},
+		{
+			q: "Chính sách 'hạn điền' của Hồ Quý Ly nhằm mục đích gì?", 
+			a: ["Tặng thêm đất cho quan lại", "Quy định số lượng ruộng đất tối đa của quan lại, quý tộc", "Cấm dân nghèo mua đất", "Tất cả ruộng đất thuộc về nhà vua"], 
+			c: 1, 
+			n: "Chính sách hạn điền quy định số lượng ruộng đất tối đa mà quan lại và quý tộc được sở hữu [4]."
+		},
+		{
+			q: "Trong cải cách văn hóa, nhà Hồ đã có bước đi tiên phong nào để chấn hưng văn hóa dân tộc?", 
+			a: ["Chỉ dùng tiếng Hán", "Lần đầu tiên dùng chữ Nôm để sáng tác thơ văn", "Cấm dùng chữ viết", "Xây dựng tháp Chàm"], 
+			c: 1, 
+			n: "Nhà Hồ lần đầu tiên dùng chữ Nôm để chấn hưng văn hóa dân tộc và khuyến khích sáng tác [4]."
+		},
+		{
+			q: "Vũ khí hỏa khí nổi tiếng của nhà Hồ do Hồ Nguyên Trừng chế tạo có tên là gì?", 
+			a: ["Súng lục", "Súng thần cơ", "Máy bắn đá", "Cung liên châu"], 
+			c: 1, 
+			n: "Nhà Hồ chú trọng chế tạo nhiều vũ khí mới, tiêu biểu là súng thần cơ – loại đại bác đầu tiên ở nước ta [4]."
+		},
+		{
+			q: "Quân Minh lấy cớ gì để kéo 20 vạn quân sang xâm lược nước ta vào năm 1406?", 
+			a: ["Giúp nhà Hồ đánh quân Chiêm", "Phù Trần, diệt Hồ", "Đòi nộp vàng bạc", "Khám phá vùng đất mới"], 
+			c: 1, 
+			n: "Tháng 11 – 1406, nhà Minh lấy cớ 'phù Trần, diệt Hồ' để huy động hơn 20 vạn quân xâm lược Đại Ngu [5]."
+		},
+		{
+			q: "Phòng tuyến quan trọng nào của nhà Hồ đã bị thất thủ vào tháng 1-1407?", 
+			a: ["Thành Tây Đô", "Thành Đa Bang (Ba Vì, Hà Nội)", "Cửa biển Vân Đồn", "Ải Chi Lăng"], 
+			c: 1, 
+			n: "Tháng 1 – 1407, sau nhiều trận chiến ác liệt, thành Đa Bang bị thất thủ khiến quân nhà Hồ phải rút lui [5]."
+		},
+		{
+			q: "Ai là người đã nói câu nổi tiếng: 'Thần không sợ đánh, chỉ sợ lòng dân không theo'?", 
+			a: ["Hồ Quý Ly", "Hồ Nguyên Trừng", "Hồ Hán Thương", "Nguyễn Trãi"], 
+			c: 1, 
+			n: "Tả tướng quốc Hồ Nguyên Trừng đã khẳng định sức mạnh của lòng dân qua câu nói này [6]."
+		},
+		{
+			q: "Cuộc kháng chiến của nhà Hồ kết thúc thất bại hoàn toàn vào thời gian nào?", 
+			a: ["Năm 1400", "Tháng 6 - 1407", "Năm 1418", "Năm 1427"], 
+			c: 1, 
+			n: "Tháng 6 – 1407, Hồ Quý Ly và các con bị bắt, cuộc kháng chiến của nhà Hồ hoàn toàn thất bại [5]."
+		},
+		{
+			q: "Nguyên nhân chính dẫn đến sự thất bại nhanh chóng của nhà Hồ là gì?", 
+			a: ["Vũ khí quá thô sơ", "Quân đội quá ít", "Chưa tập hợp được sức mạnh đoàn kết toàn dân", "Địa hình không thuận lợi"], 
+			c: 2, 
+			n: "Cuộc kháng chiến thất bại là do nhà Hồ không đề ra được đường lối đúng đắn, quá chú trọng phòng tuyến quân sự và thiếu sự ủng hộ của dân dân [6]."
+		},
+		{
+			q: "Chính sách 'hạn nô' của nhà Hồ có nội dung gì?", 
+			a: ["Tăng thêm số lượng nô tì", "Ấn định số lượng nô tì của quan lại, quý tộc", "Thả hết nô tì", "Bán nô tì ra nước ngoài"], 
+			c: 1, 
+			n: "Chính sách hạn nô quy định rõ số lượng nô tì mà mỗi cấp bậc quan lại, quý tộc được phép có [4]."
+		},
+		{
+			q: "Hồ Quý Ly đã cho dịch các sách chữ Hán sang chữ Nôm nhằm mục đích gì?", 
+			a: ["Dạy cho quân Minh", "Phục vụ thi cử và học tập", "Để làm đẹp thư viện", "Để đốt bỏ"], 
+			c: 1, 
+			n: "Việc dịch sách Hán sang Nôm nhằm khuyến khích học tập và nâng cao dân trí tộc [4]."
+		},
+		{
+			q: "Công trình kiến trúc nào của nhà Hồ đã được UNESCO công nhận là Di sản văn hóa thế giới?", 
+			a: ["Thành Thăng Long", "Thành nhà Hồ (Vĩnh Lộc, Thanh Hóa)", "Cố đô Hoa Lư", "Vịnh Hạ Long"], 
+			c: 1, 
+			n: "Thành nhà Hồ được UNESCO công nhận là Di sản văn hóa thế giới vào năm 2011 [3], [6]."
+		},
+		{
+			q: "Nhà Hồ đã chế tạo loại thuyền chiến lớn có hai tầng để tăng cường thủy quân, tên là?", 
+			a: ["Thuyền rồng", "Cổ lâu thuyền", "Thuyền thâu nhỏ", "Tàu buồm"], 
+			c: 1, 
+			n: "Nhà Hồ chú trọng đóng những loại thuyền chiến lớn có hai tầng gọi là cổ lâu thuyền [4]."
+		},
+		{
+			q: "Nhà Hồ thực hiện cải cách hành chính bằng cách dời đô và đổi tên một số đơn vị hành chính cấp nào?", 
+			a: ["Cấp xã", "Cấp trấn", "Cấp huyện", "Cấp làng"], 
+			c: 1, 
+			n: "Nhà Hồ đã đổi tên một số đơn vị hành chính cấp trấn và đặt chức An phủ sứ ở các lộ [4]."
+		},
+		{
+			q: "Thực vật lấy khí gì từ môi trường để thực hiện quá trình quang hợp tạo đường glucose?", 
+			a: ["Khí Oxy", "Khí CO2", "Khí Nitơ", "Khí Hidro"], 
+			c: 1, 
+			n: "Bé Sen nhắc bạn kiến thức KHTN: Để tồn tại, cây cối phải thực hiện quang hợp bằng cách lấy khí CO2, nước và năng lượng [1]."
+		},
+		{
+			q: "Hiện tượng 'lens flare' (lóe sáng ống kính) trong camera xảy ra khi nào?", 
+			a: ["Khi chụp ảnh trong bóng tối", "Khi hướng camera về nguồn sáng đặc biệt mạnh", "Khi camera hết pin", "Khi ống kính bị mờ do hơi nước"], 
+			c: 1, 
+			n: "Bé Sen nhắc bạn kiến thức KHTN: Lens flare là hiện tượng lóe sáng xuất hiện khi bạn hướng ống kính về nguồn sáng mạnh [1]."
+		}
+	],
+		"bài 19": [
+		{
+			q: "Cuộc khởi nghĩa Lam Sơn bùng nổ nhằm chống lại quân xâm lược nào?", 
+			a: ["Quân Mông - Nguyên", "Quân Minh", "Quân Tống", "Quân Thanh"], 
+			c: 1, 
+			n: "Cuộc khởi nghĩa nổ ra để lật đổ ách thống trị tàn bạo của nhà Minh [2], [8]."
+		},
+		{
+			q: "Ai là người dựng cờ khởi nghĩa và tự xưng là Bình Định Vương năm 1418?", 
+			a: ["Nguyễn Trãi", "Lê Lợi", "Nguyễn Chích", "Lê Lai"], 
+			c: 1, 
+			n: "Đầu năm 1418, Lê Lợi cùng các hào kiệt dựng cờ khởi nghĩa tại căn cứ Lam Sơn (Thanh Hóa) [5]."
+		},
+		{
+			q: "Hội thề Lũng Nhai (1416) có ý nghĩa gì đối với cuộc khởi nghĩa?", 
+			a: ["Đánh dấu sự kết thúc khởi nghĩa", "Thể hiện tinh thần đoàn kết, quyết tâm đánh giặc", "Kêu gọi quân Minh rút quân", "Thành lập triều đại mới"], 
+			c: 1, 
+			n: "Lê Lợi cùng 18 người bạn chiến đấu đã làm lễ tế kết nghĩa anh em, nguyện một lòng đánh giặc cứu nước [5]."
+		},
+		{
+			q: "Vị tướng nào đã đóng giả Lê Lợi để nhử địch và hy sinh anh dũng?", 
+			a: ["Nguyễn Trãi", "Lê Lai", "Nguyễn Bặc", "Trần Bình Trọng"], 
+			c: 1, 
+			n: "Lê Lai đã đổi áo bào cho Lê Lợi để cứu chủ tướng khỏi vòng vây của quân Minh [5]."
+		},
+		{
+			q: "Ai là người đã đề xuất kế hoạch chuyển địa bàn hoạt động từ Thanh Hóa vào Nghệ An năm 1424?", 
+			a: ["Nguyễn Trãi", "Lê Sát", "Nguyễn Chích", "Lê Ngân"], 
+			c: 2, 
+			n: "Nguyễn Chích đề xuất chuyển quân vào Nghệ An để làm nơi đứng chân, rồi từ đó đánh ngược ra Đông Đô [6]."
+		},
+		{
+			q: "Chiến thắng nào vào tháng 11 - 1426 đã làm thất bại âm mưu chiếm lại quyền chủ động của Vương Thông?", 
+			a: ["Trận Chi Lăng", "Trận Tốt Động – Chúc Động", "Trận Xương Giang", "Trận Vân Đồn"], 
+			c: 1, 
+			n: "Quân Lam Sơn đã đặt mai phục và đánh tan quân của Vương Thông tại Tốt Động – Chúc Động [6]."
+		},
+		{
+			q: "Trận đánh quyết định nào năm 1427 đã tiêu diệt hoàn toàn quân cứu viện của Liễu Thăng?", 
+			a: ["Trận Chương Dương", "Trận Hàm Tử", "Trận Chi Lăng – Xương Giang", "Trận Đông Bộ Đầu"], 
+			c: 2, 
+			n: "Tại Chi Lăng, quân Minh bị phục kích và Liễu Thăng bị chém đầu, sau đó quân giặc bị tiêu diệt ở Xương Giang [7]."
+		},
+		{
+			q: "Sự kiện nào đánh dấu cuộc khởi nghĩa Lam Sơn kết thúc thắng lợi hoàn toàn?", 
+			a: ["Chiến thắng Tốt Động", "Hội thề Đông Quan (12/1427)", "Lê Lợi lên ngôi hoàng đế", "Quân Minh tăng thêm viện binh"], 
+			c: 1, 
+			n: "Hội thề Đông Quan diễn ra để chấm dứt chiến tranh, quân Minh phải rút về nước [7]."
+		},
+		{
+			q: "Tác phẩm văn học nào được xem là bản tuyên ngôn độc lập thứ hai của dân tộc ta?", 
+			a: ["Nam quốc sơn hà", "Bình Ngô đại cáo", "Hịch tướng sĩ", "Quân trung từ mệnh tập"], 
+			c: 1, 
+			n: "Nguyễn Trãi đã viết Bình Ngô đại cáo để khẳng định nền độc lập và chủ quyền của Đại Việt [8]."
+		},
+		{
+			q: "Nghệ thuật quân sự đặc sắc nào được Nguyễn Trãi sử dụng để thu phục quân Minh?", 
+			a: ["Vườn không nhà trống", "Chiến tranh du kích", "Tâm công (đánh vào lòng người)", "Ngụ binh ư nông"], 
+			c: 2, 
+			n: "Nguyễn Trãi đã dùng thư dụ hàng để đánh vào lòng quân Minh, giúp giành thành trì mà không tốn xương máu [8]."
+		},
+		{
+			q: "Nguyên nhân quan trọng nhất dẫn đến thắng lợi của khởi nghĩa Lam Sơn là gì?", 
+			a: ["Vũ khí hiện đại", "Tài chỉ huy của tướng giặc yếu", "Lòng yêu nước và tinh thần đoàn kết toàn dân", "Sự hỗ trợ từ bên ngoài"], 
+			c: 2, 
+			n: "Thắng lợi bắt nguồn từ lòng yêu nước và sự đồng lòng của mọi tầng lớp nhân dân [8]."
+		},
+		{
+			q: "Lê Lợi đã chọn nơi nào làm căn cứ đầu tiên cho cuộc khởi nghĩa?", 
+			a: ["Nghệ An", "Lam Sơn (Thanh Hóa)", "Đông Quan", "Tây Đô"], 
+			c: 1, 
+			n: "Lê Lợi là hào trưởng vùng Lam Sơn nên đã tích trữ lương thực, vũ khí tại đây để chờ thời cơ [5]."
+		},
+		{
+			q: "Khởi nghĩa Lam Sơn diễn ra trong khoảng thời gian bao nhiêu năm?", 
+			a: ["5 năm", "10 năm", "12 năm", "20 năm"], 
+			c: 1, 
+			n: "Cuộc khởi nghĩa kéo dài từ năm 1418 đến năm 1427 [2]."
+		},
+		{
+			q: "Năm 1425, địa bàn hoạt động của nghĩa quân đã mở rộng đến đâu?", 
+			a: ["Chỉ ở Thanh Hóa", "Đến đèo Hải Vân", "Chỉ ở Nghệ An", "Ra tận biên giới phía Bắc"], 
+			c: 1, 
+			n: "Trong vòng 10 tháng, nghĩa quân đã giải phóng một vùng rộng lớn từ Thanh Hóa vào đến đèo Hải Vân [6]."
+		},
+		{
+			q: "Ai là người được Lê Lợi tin tưởng giao cho nhiệm vụ viết 'Quân trung từ mệnh tập'?", 
+			a: ["Lê Lai", "Nguyễn Trãi", "Trần Nguyên Hãn", "Lê Sát"], 
+			c: 1, 
+			n: "Nguyễn Trãi là cánh tay đắc lực của Lê Lợi trong việc bàn mưu lược và thư từ ngoại giao [8]."
+		},
+		{
+			q: "Trước khi thắng lợi, nghĩa quân đã gặp khó khăn gì ở núi Chí Linh?", 
+			a: ["Bị quân Minh bao vây, thiếu lương thực trầm trọng", "Bị dịch bệnh", "Gặp hỏa hoạn", "Thiếu vũ khí"], 
+			c: 0, 
+			n: "Lực lượng nghĩa quân lúc đó còn yếu, có lúc chỉ còn 100 người và phải giết cả voi, ngựa để nuôi quân [5]."
+		},
+		{
+			q: "Thực vật sử dụng quá trình nào để tổng hợp đường glucose từ CO2, nước và năng lượng?", 
+			a: ["Hô hấp", "Thoát hơi nước", "Quang hợp", "Lên men"], 
+			c: 2, 
+			n: "Bé Sen nhắc bạn: Theo video KHTN, đây là quá trình quan trọng để thực vật tồn tại và phát triển [3]."
+		},
+		{
+			q: "Hiện tượng 'lens flares' (lóe sáng ống kính) xảy ra khi camera đối diện với gì?", 
+			a: ["Bóng tối", "Nguồn sáng đặc biệt mạnh", "Nước", "Cát"], 
+			c: 1, 
+			n: "Bé Sen nhắc bạn: Khi hướng camera về nguồn sáng mạnh, bạn sẽ thấy các vệt sáng hoặc disc xuất hiện [3]."
+		},
+		{
+			q: "Khí nào được thực vật lấy từ môi trường để thực hiện quá trình quang hợp?", 
+			a: ["Khí Oxy", "Khí Nitơ", "Khí CO2", "Khí Hidro"], 
+			c: 2, 
+			n: "Cây cối cần lấy khí CO2 và nước dưới ánh sáng để tạo ra chất hữu cơ [3]."
+		},
+		{
+			q: "Khu di tích Lam Kinh ngày nay nằm ở tỉnh nào của Việt Nam?", 
+			a: ["Nghệ An", "Thanh Hóa", "Hà Tĩnh", "Quảng Bình"], 
+			c: 1, 
+			n: "Khu di tích lịch sử Lam Kinh thuộc huyện Thọ Xuân, tỉnh Thanh Hóa, nơi Lê Lợi dựng nghiệp [2]."
+		}
+	],
+       "bài 20": [
+		{
+			q: "Sau khi đánh đuổi quân Minh, Lê Lợi lên ngôi hoàng đế vào thời gian nào?", 
+			a: ["Tháng 1 năm 1427", "Tháng 4 năm 1428", "Năm 1430", "Năm 1460"], 
+			c: 1, 
+			n: "Tháng 4 năm 1428, sau thắng lợi của khởi nghĩa Lam Sơn, Lê Lợi lên ngôi Hoàng đế, khôi phục quốc hiệu Đại Việt [2]."
+		},
+		{
+			q: "Kinh đô của nước ta thời Lê sơ được đặt tại đâu?", 
+			a: ["Hoa Lư", "Tây Đô", "Đông Kinh (Thăng Long)", "Phú Xuân"], 
+			c: 2, 
+			n: "Nhà Lê sơ đóng đô ở Đông Kinh, tức thành Thăng Long ngày nay [2]."
+		},
+		{
+			q: "Dưới thời vua Lê Thánh Tông, cả nước được chia thành bao nhiêu đơn vị hành chính cấp đạo?", 
+			a: ["10 đạo", "12 đạo", "13 đạo thừa tuyên và một phủ Trung Đô", "24 lộ"], 
+			c: 2, 
+			n: "Đến thời Lê Thánh Tông, hành chính được hoàn thiện nhất, cả nước có 13 đạo thừa tuyên và phủ Trung Đô (Thăng Long) [5]."
+		},
+		{
+			q: "Vị vua nào đã ban hành bộ 'Quốc triều hình luật' (Luật Hồng Đức)?", 
+			a: ["Lê Thái Tổ", "Lê Thái Tông", "Lê Thánh Tông", "Lê Nhân Tông"], 
+			c: 2, 
+			n: "Để củng cố chế độ tập quyền, vua Lê Thánh Tông cho biên soạn và ban hành bộ luật Hồng Đức nổi tiếng [5]."
+		},
+		{
+			q: "Nội dung nổi bật của Luật Hồng Đức là bảo vệ chủ quyền quốc gia và quyền lợi của ai?", 
+			a: ["Chỉ bảo vệ vua", "Người nước ngoài", "Phụ nữ", "Chỉ bảo vệ quý tộc"], 
+			c: 2, 
+			n: "Luật Hồng Đức có những điểm tiến bộ như bảo vệ chủ quyền quốc gia và quyền lợi phụ nữ [5]."
+		},
+		{
+			q: "Chính sách quân đội 'ngụ binh ư nông' thời Lê sơ có nghĩa là gì?", 
+			a: ["Quân đội chỉ làm ruộng", "Gửi quân về làm ruộng khi không có chiến tranh", "Tất cả nông dân phải đi lính", "Quân đội không được làm ruộng"], 
+			c: 1, 
+			n: "Nhà Lê tiếp tục duy trì chính sách gửi quân ở nhà nông để vừa đảm bảo sản xuất vừa sẵn sàng chiến đấu [5]."
+		},
+		{
+			q: "Để phát triển nông nghiệp, nhà Lê sơ đã ban hành chính sách chia ruộng đất công gọi là?", 
+			a: ["Chế độ quân điền", "Chế độ hạn điền", "Chế độ lộc điền", "Chế độ tô dung điệu"], 
+			c: 0, 
+			n: "Nhà Lê ban hành chính sách quân điền, chia ruộng đất công cho các thành viên trong làng xã [6]."
+		},
+		{
+			q: "Ba chức quan chuyên trách về nông nghiệp thời Lê sơ là những chức nào?", 
+			a: ["Khuyến nông sứ, Hà đê sứ, Đồn điền sứ", "Tiết độ sứ, Thái thú, Thứ sử", "An phủ sứ, Kinh lược sứ, Đốc học", "Trạng nguyên, Bảng nhãn, Thám hoa"], 
+			c: 0, 
+			n: "Các chức quan Khuyến nông sứ, Hà đê sứ và Đồn điền sứ được đặt ra để chăm lo sản xuất nông nghiệp [6]."
+		},
+		{
+			q: "Sản phẩm gốm nào thời Lê sơ nổi tiếng và hiện được trưng bày tại nhiều bảo tàng thế giới?", 
+			a: ["Gốm Bát Tràng", "Gốm Chu Đậu", "Gốm Phù Lãng", "Gốm Thổ Hà"], 
+			c: 1, 
+			n: "Gốm Chu Đậu (Hải Dương) phát triển rực rỡ và là mặt hàng xuất khẩu có giá trị cao thời bấy giờ [6]."
+		},
+		{
+			q: "Hệ tư tưởng nào chiếm vị trí độc tôn trong đời sống chính trị - xã hội thời Lê sơ?", 
+			a: ["Phật giáo", "Đạo giáo", "Nho giáo", "Thiên Chúa giáo"], 
+			c: 2, 
+			n: "Thời Lê sơ, Nho giáo chiếm vị trí độc tôn; Phật giáo và Đạo giáo bị hạn chế [7]."
+		},
+		{
+			q: "Trường học cao nhất của cả nước được mở rộng dưới thời Lê sơ là?", 
+			a: ["Văn Miếu", "Quốc Tử Giám", "Học viện Khoa học", "Thái học viện"], 
+			c: 1, 
+			n: "Ngay sau khi lên ngôi, vua Lê Thái Tổ đã cho dựng lại Quốc Tử Giám ở kinh thành [7]."
+		},
+		{
+			q: "Ai là tác giả của câu nói: 'Hiền tài là nguyên khí quốc gia'?", 
+			a: ["Nguyễn Trãi", "Lê Thánh Tông", "Thân Nhân Trung", "Ngô Sĩ Liên"], 
+			c: 2, 
+			n: "Năm 1484, tiến sĩ Thân Nhân Trung đã soạn văn bia khẳng định vai trò của người tài đối với đất nước [7]."
+		},
+		{
+			q: "Tác phẩm văn học chữ Hán nào của Nguyễn Trãi khẳng định độc lập dân tộc?", 
+			a: ["Quốc âm thi tập", "Bình Ngô đại cáo", "Hồng Đức quốc âm thi tập", "Riêm Kê"], 
+			c: 1, 
+			n: "Bình Ngô đại cáo là kiệt tác văn học chữ Hán, được coi là bản tuyên ngôn độc lập của dân tộc [8]."
+		},
+		{
+			q: "Bộ quốc sử đồ sộ gồm 15 quyển biên soạn thời Lê sơ là bộ nào?", 
+			a: ["Đại Việt sử ký", "Đại Việt sử ký toàn thư", "Sử ký", "Việt Nam sử lược"], 
+			c: 1, 
+			n: "Ngô Sĩ Liên là người đóng vai trò trọng yếu trong việc biên soạn bộ Đại Việt sử ký toàn thư [8], [9]."
+		},
+		{
+			q: "Nhân vật lịch sử nào thời Lê sơ được mệnh danh là 'Trạng Lường'?", 
+			a: ["Vũ Hữu", "Lương Thế Vinh", "Phan Phu Tiên", "Thân Nhân Trung"], 
+			c: 1, 
+			n: "Lương Thế Vinh giỏi tính toán nên người ta thường gọi là Trạng Lường; ông là tác giả cuốn Đại thành toán pháp [9]."
+		},
+		{
+			q: "Công trình kiến trúc nào thời Lê sơ tập trung các lăng tẩm và cung điện ở Thanh Hóa?", 
+			a: ["Hoàng thành Thăng Long", "Điện Lam Kinh", "Cố đô Hoa Lư", "Thành nhà Hồ"], 
+			c: 1, 
+			n: "Nghệ thuật kiến trúc thời này tập trung chủ yếu ở điện Lam Kinh (Thanh Hóa) [8]."
+		},
+		{
+			q: "Tác phẩm địa lý đầu tiên của nước ta do Nguyễn Trãi biên soạn có tên là gì?", 
+			a: ["Hồng Đức bản đồ", "Dư địa chí", "Toàn thư", "Bản thảo thực vật"], 
+			c: 1, 
+			n: "Nguyễn Trãi là tác giả của bộ Dư địa chí, tác phẩm địa lý tiêu biểu thời kỳ này [8], [9]."
+		},
+		{
+			q: "Vua Lê Thánh Tông đã căn dặn về việc bảo vệ chủ quyền lãnh thổ như thế nào?", 
+			a: ["Có thể nhường đất cho giặc", "Một thước núi, một tấc sông của ta lẽ nào lại vứt bỏ", "Chỉ lo làm ăn không cần giữ đất", "Tất cả sai"], 
+			c: 1, 
+			n: "Vua khẳng định: 'Nếu ngươi dám đem một thước, một tấc đất của Thái Tổ làm mồi cho giặc, thì tội phải tru di' [5]."
+		},
+		{
+			q: "Thực vật cần lấy khí gì và nước để thực hiện quang hợp tạo glucose?", 
+			a: ["Khí Oxy", "Khí Nitơ", "Khí CO2 và năng lượng", "Khí Hidro"], 
+			c: 2, 
+			n: "Bé Sen nhắc bạn: Theo kiến thức KHTN, cây cối lấy khí CO2, nước và năng lượng ánh sáng để quang hợp [3]."
+		},
+		{
+			q: "Hiện tượng 'lens flares' trong camera thường xuất hiện khi nào?", 
+			a: ["Khi chụp ảnh trong bóng tối", "Khi hướng ống kính về nguồn sáng mạnh", "Khi camera hết pin", "Khi ống kính bị mờ"], 
+			c: 1, 
+			n: "Bé Sen nhắc bạn: Đó là hiện tượng lóe sáng hoặc vệt sáng xuất hiện khi camera đối diện nguồn sáng đặc biệt mạnh [3]."
+		}
+	],
+	"bài 21": [
+		{
+			q: "Vùng đất phía Nam của Tổ quốc vào khoảng thế kỉ X – XVI được xác định từ đâu đến đâu?", 
+			a: ["Từ Thanh Hóa đến Bình Định", "Từ Quảng Bình đến mũi Cà Mau ngày nay", "Từ Thừa Thiên Huế đến Đồng Nai", "Từ Quảng Nam đến Bình Thuận"], 
+			c: 1, 
+			n: "Thủơ xa xưa, vùng đất này trải dài từ Quảng Bình, Quảng Trị đến tận mũi Cà Mau [4]."
+		},
+		{
+			q: "Vào năm 1069, dưới thời nhà Lý, vua Champa đã nhường cho Đại Việt ba châu nào?", 
+			a: ["Châu Ô, châu Rí", "Bố Chính, Địa Lý, Ma Linh", "Quảng Nam, Quảng Ngãi", "Thuận Châu, Hóa Châu"], 
+			c: 1, 
+			n: "Năm 1069, sau một cuộc chiến, vua Champa đã nhường ba châu là Bố Chính, Địa Lý và Ma Linh cho Đại Việt [5]."
+		},
+		{
+			q: "Cuộc hôn nhân giữa vua Chế Mân và công chúa Huyền Trân diễn ra vào năm nào?", 
+			a: ["Năm 1069", "Năm 1306", "Năm 1471", "Năm 1560"], 
+			c: 1, 
+			n: "Năm 1306, vua Chế Mân kết hôn với công chúa Huyền Trân của Đại Việt [5]."
+		},
+		{
+			q: "Sính lễ mà vua Chế Mân dâng cho Đại Việt năm 1306 là hai vùng đất nào?", 
+			a: ["Châu Bố Chính và Địa Lý", "Châu Ô và châu Rí", "Đạo Quảng Nam", "Vùng đất Đồng Nai"], 
+			c: 1, 
+			n: "Vua Champa đã lấy hai châu Ô và châu Rí (phía nam Quảng Trị và Thừa Thiên Huế) làm sính lễ [5]."
+		},
+		{
+			q: "Năm 1307, hai châu Ô và Rí được Đại Việt đổi tên thành gì?", 
+			a: ["Bố Chính và Ma Linh", "Thuận Châu và Hóa Châu", "Quảng Nam và Bình Định", "Gia Định và Định Tường"], 
+			c: 1, 
+			n: "Sau khi tiếp nhận, năm 1307, châu Ô và châu Rí được đổi tên thành Thuận Châu và Hóa Châu [5]."
+		},
+		{
+			q: "Vị vua nào của nhà Lê sơ đã lập ra đạo Quảng Nam vào năm 1471?", 
+			a: ["Lê Thái Tổ", "Lê Thánh Tông", "Lê Nhân Tông", "Lê Thái Tông"], 
+			c: 1, 
+			n: "Năm 1471, vua Lê Thánh Tông cho lập đạo Quảng Nam bao gồm nhiều tỉnh miền Trung ngày nay [5]."
+		},
+		{
+			q: "Đạo Quảng Nam thành lập năm 1471 bao gồm các vùng đất nào ngày nay?", 
+			a: ["Quảng Bình, Quảng Trị", "Quảng Nam, Quảng Ngãi, Bình Định", "Khánh Hòa, Ninh Thuận", "Đồng Nai, Gia Định"], 
+			c: 1, 
+			n: "Đạo Quảng Nam thời đó gồm các tỉnh Quảng Nam, Quảng Ngãi và Bình Định ngày nay [5]."
+		},
+		{
+			q: "Đến cuối thế kỉ XV, lãnh thổ của Champa bị thu hẹp lại chỉ còn từ vùng nào?", 
+			a: ["Từ sông Gianh đến đèo Hải Vân", "Từ đèo Cả đến sông Dinh (Bình Thuận)", "Từ Bình Định đến Đồng Nai", "Chỉ còn vùng đất Tây Nguyên"], 
+			c: 1, 
+			n: "Sau các biến động chính trị, lãnh thổ Champa chỉ còn từ phía nam đèo Cả đến sông Dinh [5]."
+		},
+		{
+			q: "Tình hình vùng đất từ lưu vực sông Đồng Nai trở vào Nam từ thế kỉ X đến XVI như thế nào?", 
+			a: ["Dân cư đông đúc sầm uất", "Gần như không có dấu chân người, còn hoang dại", "Là trung tâm kinh tế của Champa", "Phát triển mạnh về công nghiệp"], 
+			c: 1, 
+			n: "Vùng đất Nam Bộ thời kỳ này gần như không có dấu chân người, chủ yếu là rừng rậm và đầm lầy [6]."
+		},
+		{
+			q: "Ngành kinh tế đóng vai trò nuôi sống cư dân Champa và các lớp dân di cư từ Đại Việt là?", 
+			a: ["Sản xuất hàng tiêu dùng", "Việc trồng lúa nước", "Khai thác mỏ vàng", "Chăn nuôi cừu"], 
+			c: 1, 
+			n: "Việc trồng lúa nước vẫn tiếp tục giữ vai trò nuôi sống cư dân thời kì này [6]."
+		},
+		{
+			q: "Những nghề thủ công truyền thống nào vẫn được duy trì ở vùng đất phía Nam?", 
+			a: ["Chế tạo máy bay", "Làm đồ gốm, dệt vải, đóng thuyền", "Luyện kim đen", "Sản xuất giấy viết"], 
+			c: 1, 
+			n: "Cư dân vẫn duy trì và phát triển các nghề thủ công như làm đồ gốm, dệt vải và đóng thuyền [6]."
+		},
+		{
+			q: "Thương nhân Champa thời kỳ này thường trao đổi sản vật với khu vực nào?", 
+			a: ["Châu Âu và châu Mỹ", "Thương nhân nước ngoài qua đường biển", "Chỉ buôn bán trong làng", "Không có hoạt động thương mại"], 
+			c: 1, 
+			n: "Các cộng đồng cư dân ven biển còn buôn bán sản vật, trao đổi hàng hoá với thương nhân nước ngoài [6]."
+		},
+		{
+			q: "Tại Thừa Thiên Huế ngày nay, những dòng họ nào cho thấy dấu ấn nguồn gốc Chăm?", 
+			a: ["Họ Nguyễn, họ Lê", "Họ Ông, Ma, Trà, Chế", "Họ Trần, họ Lý", "Họ Phan, họ Vũ"], 
+			c: 1, 
+			n: "Ở Thừa Thiên Huế vẫn còn nhiều dòng họ gốc Chăm như: họ Ông, Ma, Trà, Chế [7]."
+		},
+		{
+			q: "Sự hòa nhập giữa văn hóa Việt và văn hóa Chăm thể hiện rõ trong yếu tố nào?", 
+			a: ["Sử dụng tiếng Anh", "Âm nhạc, tín ngưỡng và cách ăn mặc", "Sản xuất ô tô", "Xây dựng nhà chọc trời"], 
+			c: 1, 
+			n: "Đời sống yên bình tạo nên sự hòa nhập văn hóa trong âm nhạc, tín ngưỡng và cả cách ăn mặc [7]."
+		},
+		{
+			q: "Công trình kiến trúc Champa tiêu biểu tại Phú Yên được nhắc tới là gì?", 
+			a: ["Ăng-co Vát", "Tháp Nhạn", "Tử Cấm Thành", "Chùa Một Cột"], 
+			c: 1, 
+			n: "Tháp Nhạn (Phú Yên) là một di tích tháp Chăm tiêu biểu xây dựng từ thế kỉ XI [7]."
+		},
+		{
+			q: "Ven bờ sông Gianh (Quảng Bình) từ trước thế kỉ XI đã có đặc điểm dân cư gì?", 
+			a: ["Chỉ có người Việt", "Có cả người Chăm và người Việt cùng chung sống", "Chỉ có người Mông Cổ", "Không có người ở"], 
+			c: 1, 
+			n: "Từ trước thế kỉ XI, ven bờ sông Gianh đã có cả người Chăm và người Việt cùng chung sống [4]."
+		},
+		{
+			q: "Linh mục Ô-đô-ri-đê Bô-đê-nô-nê đã miêu tả miền Trung nước ta vào thế kỉ XIV như thế nào?", 
+			a: ["Là một nơi nghèo đói", "Một xứ sở rất đẹp nhưng người ta không thấy gì ngoài biển", "Đầy rẫy các nhà máy", "Chỉ có núi đá trọc"], 
+			c: 1, 
+			n: "Linh mục người I-ta-li-a đã khen ngợi vẻ đẹp của vùng đất này khi ghé thăm [6]."
+		},
+		{
+			q: "Vùng đất Nam Bộ xưa (Bến Tre, Tiền Giang, Đồng Tháp...) chủ yếu có cảnh quan gì?", 
+			a: ["Đồng cỏ sa mạc", "Rừng đước, kênh rạch chằng chịt", "Núi cao tuyết phủ", "Các đồn điền cà phê"], 
+			c: 1, 
+			n: "Vùng đất này thời đó chủ yếu là những vùng đầm lầy, rừng đước và kênh rạch [6]."
+		},
+		{
+			q: "Thực vật lấy khí gì và nước để thực hiện quá trình quang hợp tạo glucose?", 
+			a: ["Khí Oxy", "Khí CO2 và năng lượng", "Khí Nitơ", "Khí Hidro"], 
+			c: 1, 
+			n: "Bé Sen nhắc bạn kiến thức KHTN: Cây xanh cần khí CO2, nước và năng lượng ánh sáng để quang hợp [8]."
+		},
+		{
+			q: "Hiện tượng 'lens flares' (lóe sáng ống kính) trong camera thường xuất hiện khi nào?", 
+			a: ["Khi chụp trong bóng tối", "Khi hướng camera về nguồn sáng đặc biệt mạnh", "Khi camera hết pin", "Khi camera bị hỏng"], 
+			c: 1, 
+			n: "Bé Sen nhắc bạn: Đó là hiện tượng lóe sáng hoặc vệt sáng xuất hiện khi đối diện nguồn sáng mạnh [8]."
+		}
+	],
+       "bài 1 địa lý": [
+    {
+        q: "Châu Âu là một bộ phận của lục địa nào?", 
+        a: ["Lục địa Phi", "Lục địa Á - Âu", "Lục địa Ô-xtrây-li-a", "Lục địa Nam Cực"], 
+        c: 1, 
+        n: "Châu Âu là một bộ phận của lục địa Á – Âu, nằm hoàn toàn trên bán cầu Bắc [2], [3]."
+    },
+    {
+        q: "Diện tích của châu Âu khoảng bao nhiêu triệu km2?", 
+        a: ["Khoảng 10,5 triệu km2", "Khoảng 44,4 triệu km2", "Khoảng 30 triệu km2", "Khoảng 42 triệu km2"], 
+        c: 0, 
+        n: "Châu Âu có diện tích nhỏ, khoảng 10,5 triệu km2 [3]."
+    },
+    {
+        q: "Phía đông của châu Âu ngăn cách với châu Á bởi dãy núi nào?", 
+        a: ["Dãy An-pơ", "Dãy Hi-ma-lay-a", "Dãy U-ran (Ural)", "Dãy Các-pát"], 
+        c: 2, 
+        n: "Phía đông có dãy U-ran (Ural) là ranh giới tự nhiên ngăn cách châu Âu với châu Á [3]."
+    },
+    {
+        q: "Đường bờ biển châu Âu có đặc điểm gì nổi bật?", 
+        a: ["Ít bị cắt xẻ", "Dài khoảng 43 000 km, bị cắt xẻ mạnh", "Thẳng tắp, không có vịnh biển", "Chỉ có ở phía đông"], 
+        c: 1, 
+        n: "Đường bờ biển dài khoảng 43 000 km, bị cắt xẻ mạnh, tạo nhiều bán đảo, vũng vịnh [3]."
+    },
+    {
+        q: "Dạng địa hình nào chiếm hơn 50% diện tích châu Âu?", 
+        a: ["Địa hình núi cao", "Địa hình đồng bằng", "Địa hình sơn nguyên", "Địa hình hoang mạc"], 
+        c: 1, 
+        n: "Đồng bằng chiếm phần lớn diện tích, chiếm hơn 50% diện tích châu lục [3]."
+    },
+    {
+        q: "Đỉnh núi nào được coi là cao nhất châu Âu?", 
+        a: ["Đỉnh E-vơ-rét", "Đỉnh En-brút (Elbrus)", "Đỉnh Mông-blăng", "Đỉnh Các-pát"], 
+        c: 1, 
+        n: "Đỉnh En-brút (Elbrus) là đỉnh núi cao nhất châu Âu với độ cao 5 642 m [3]."
+    },
+    {
+        q: "Dãy núi trẻ nào nằm ở phía nam châu Âu chiếm khoảng 1,5% diện tích lãnh thổ?", 
+        a: ["Dãy Xcan-đi-na-vi", "Dãy An-pơ (Alps)", "Dãy U-ran", "Dãy Tiên Sơn"], 
+        c: 1, 
+        n: "Các dãy núi trẻ như An-pơ, Pi-rê-nê, Các-pát... phân bố chủ yếu ở phía nam [3]."
+    },
+    {
+        q: "Đới khí hậu nào chiếm diện tích lớn nhất ở châu Âu?", 
+        a: ["Đới khí hậu cực", "Đới khí hậu ôn đới", "Đới khí hậu cận nhiệt", "Đới khí hậu nhiệt đới"], 
+        c: 1, 
+        n: "Đới khí hậu ôn đới chiếm diện tích lớn nhất, bao gồm kiểu ôn đới hải dương và ôn đới lục địa [4]."
+    },
+    {
+        q: "Kiểu khí hậu nào có đặc điểm 'mùa hạ mát, mưa quanh năm, nhiệt độ thường trên 0 độ C'?", 
+        a: ["Ôn đới lục địa", "Ôn đới hải dương", "Cận nhiệt địa trung hải", "Khí hậu cực"], 
+        c: 1, 
+        n: "Khí hậu ôn đới hải dương có đặc điểm ôn hòa, mưa quanh năm và lượng mưa tương đối lớn [4]."
+    },
+    {
+        q: "Sông dài nhất và quan trọng nhất ở châu Âu là sông nào?", 
+        a: ["Sông Rai-nơ", "Sông Đa-nuýp", "Sông Von-ga (Volga)", "Sông Thêm"], 
+        c: 2, 
+        n: "Sông Von-ga là sông dài nhất châu Âu (3 690 km) [5]."
+    },
+    {
+        q: "Các sông đổ ra Bắc Băng Dương thường có hiện tượng gì vào mùa đông?", 
+        a: ["Cạn trơ đáy", "Nước dâng cao gây lụt", "Bị đóng băng", "Nước chảy rất mạnh"], 
+        c: 2, 
+        n: "Các sông đổ ra Bắc Băng Dương bị đóng băng vào mùa đông, nhất là vùng cửa sông [5]."
+    },
+    {
+        q: "Thực vật phổ biến ở đới lạnh châu Âu là những loài nào?", 
+        a: ["Rừng lá rộng", "Rừng lá kim", "Rêu, địa y, bạch dương lùn", "Cây bụi gai"], 
+        c: 2, 
+        n: "Đới lạnh có thực vật nghèo nàn, chủ yếu là rêu, địa y, bạch dương lùn, liễu lùn... [5]."
+    },
+    {
+        q: "Rừng lá cứng và cây bụi phân bố chủ yếu ở khu vực nào của châu Âu?", 
+        a: ["Phía bắc", "Phía tây", "Phía nam (ven Địa Trung Hải)", "Phía đông"], 
+        c: 2, 
+        n: "Ở phía nam lục địa, sinh vật thích nghi với kiểu khí hậu cận nhiệt như rừng lá cứng, cây bụi [5]."
+    },
+    {
+        q: "Châu Âu nằm trong vùng vĩ độ nào trên bản đồ thế giới?", 
+        a: ["Vĩ độ thấp", "Khoảng 36 độ B đến 71 độ B", "Vĩ độ nam", "Xung quanh đường xích đạo"], 
+        c: 1, 
+        n: "Lãnh thổ châu Âu trên đất liền trải dài từ khoảng 36 độ B đến 71 độ B [3]."
+    },
+    {
+        q: "Tại khu vực ôn đới lục địa (phía đông), thiên nhiên thay đổi như thế nào từ bắc xuống nam?", 
+        a: ["Chỉ có hoang mạc", "Từ rừng lá kim sang rừng hỗn giao, thảo nguyên và bán hoang mạc", "Từ rừng nhiệt đới sang rừng lá kim", "Không thay đổi"], 
+        c: 1, 
+        n: "Thiên nhiên phía đông có sự thay đổi từ rừng lá kim sang rừng hỗn giao, thảo nguyên và xuất hiện bán hoang mạc ven biển Ca-xpi [5]."
+    },
+    {
+        q: "Dãy núi già Xcan-đi-na-vi phân bố ở khu vực nào?", 
+        a: ["Phía tây nam", "Phía bắc", "Phía đông", "Trung tâm"], 
+        c: 1, 
+        n: "Địa hình núi già nằm ở phía bắc và trung tâm châu lục, tiêu biểu là dãy Xcan-đi-na-vi [3]."
+    },
+    {
+        q: "Khu vực nào ở châu Âu có mật độ sông ngòi dày đặc nhất?", 
+        a: ["Châu Âu có mạng lưới sông ngòi dày đặc nói chung", "Chỉ có ở phía bắc", "Chỉ có ở dãy U-ran", "Không có sông"], 
+        c: 0, 
+        n: "Châu Âu có mạng lưới sông ngòi dày đặc, phần lớn các sông đầy nước quanh năm [5]."
+    },
+    {
+        q: "Thực vật lấy khí gì từ môi trường để thực hiện quá trình quang hợp?", 
+        a: ["Khí Oxy", "Khí CO2", "Khí Nitơ", "Khí Hidro"], 
+        c: 1, 
+        n: "Bé Sen nhắc bạn: Theo kiến thức KHTN, cây cối muốn tồn tại phải lấy khí CO2, nước và năng lượng để quang hợp [1]."
+    },
+    {
+        q: "Hiện tượng 'lens flares' xuất hiện trong camera khi hướng về nguồn sáng mạnh gọi là gì?", 
+        a: ["Quang hợp", "Lóe sáng ống kính", "Nhật thực", "Sét đánh"], 
+        c: 1, 
+        n: "Bé Sen nhắc bạn: Hiện tượng lóe sáng, vệt sáng hay đĩa sáng khi chỉ camera vào nguồn sáng mạnh được gọi là lens flares [1]."
+    },
+    {
+        q: "Vùng núi cao của châu Âu có đặc điểm thiên nhiên thay đổi theo yếu tố nào?", 
+        a: ["Theo màu sắc đá", "Theo độ cao", "Theo hướng gió biển", "Theo độ mặn của nước"], 
+        c: 1, 
+        n: "Ở các khu vực núi cao, khí hậu và thực vật thay đổi theo độ cao, trên đỉnh núi thường có băng tuyết bao phủ [5], [6]."
+    }
+],
+"bài 2 địa lý": [
+    {
+        q: "Năm 2020, số dân của châu Âu đạt khoảng bao nhiêu triệu người?", 
+        a: ["549,3 triệu người", "656,9 triệu người", "747,6 triệu người", "800 triệu người"], 
+        c: 2, 
+        n: "Năm 2020, số dân châu Âu đạt khoảng 747,6 triệu người (bao gồm cả số dân của Liên bang Nga) [1]."
+    },
+    {
+        q: "Dân số châu Âu chiếm khoảng bao nhiêu % dân số thế giới năm 2020?", 
+        a: ["5%", "10%", "15%", "20%"], 
+        c: 1, 
+        n: "Dân số châu lục này chiếm gần 10% số dân thế giới [1]."
+    },
+    {
+        q: "Tỉ suất tăng dân số tự nhiên của châu Âu có đặc điểm gì?", 
+        a: ["Rất cao", "Rất thấp, thậm chí có năm xuống giá trị âm", "Tăng đều qua các năm", "Không thay đổi"], 
+        c: 1, 
+        n: "Tỉ suất tăng dân số tự nhiên của châu Âu rất thấp, năm 2020 là -0,1% [1]."
+    },
+    {
+        q: "Nguyên nhân chính giúp dân số châu Âu vẫn tăng trong những năm gần đây là gì?", 
+        a: ["Do tỉ lệ sinh cao", "Do nhập cư", "Do chính sách khuyến khích đẻ nhiều", "Do diện tích mở rộng"], 
+        c: 1, 
+        n: "Những năm gần đây, số dân châu Âu tăng chủ yếu là do nhập cư [1]."
+    },
+    {
+        q: "Cơ cấu dân số theo nhóm tuổi ở châu Âu đang có xu hướng nào?", 
+        a: ["Dân số trẻ", "Dân số đang già hóa", "Tỉ lệ trẻ em tăng cao", "Dân số ổn định"], 
+        c: 1, 
+        n: "Châu Âu có cơ cấu dân số già với tỉ lệ dân số từ 65 tuổi trở lên ngày càng tăng [1]."
+    },
+    {
+        q: "Năm 2020, nhóm tuổi từ 65 trở lên ở châu Âu chiếm bao nhiêu % dân số?", 
+        a: ["8%", "14%", "19%", "25%"], 
+        c: 2, 
+        n: "Tỉ lệ người từ 65 tuổi trở lên chiếm 19% dân số vào năm 2020 [1]."
+    },
+    {
+        q: "Cơ cấu dân số theo giới tính của châu Âu có đặc điểm gì?", 
+        a: ["Tỉ lệ nam cao hơn nữ", "Tỉ lệ nữ cao hơn nam", "Nam nữ bằng nhau", "Nữ chiếm 70%"], 
+        c: 1, 
+        n: "Cơ cấu dân số theo giới tính của châu Âu có tỉ lệ nữ cao hơn nam [2]."
+    },
+    {
+        q: "Số năm đi học trung bình của người từ 25 tuổi trở lên ở châu Âu năm 2019 là bao nhiêu?", 
+        a: ["8 năm", "10 năm", "11,8 năm", "15 năm"], 
+        c: 2, 
+        n: "Dân cư châu Âu có trình độ học vấn cao, trung bình đạt 11,8 năm (năm 2019) [2]."
+    },
+    {
+        q: "Luồng nhập cư vào châu Âu chủ yếu đến từ các khu vực nào?", 
+        a: ["Châu Mỹ và châu Phi", "Châu Á và Bắc Phi", "Châu Đại Dương", "Châu Nam Cực"], 
+        c: 1, 
+        n: "Người nhập cư đến châu Âu chủ yếu là lao động đến từ châu Á và Bắc Phi [2]."
+    },
+    {
+        q: "Việc nhập cư mang lại thuận lợi gì cho châu Âu?", 
+        a: ["Gây mất trật tự", "Giải quyết tình trạng thiếu hụt lao động", "Làm tăng tỉ lệ sinh", "Xóa bỏ đô thị hóa"], 
+        c: 1, 
+        n: "Người nhập cư giúp giải quyết tình trạng thiếu hụt lao động và tăng nhu cầu tiêu dùng [2]."
+    },
+    {
+        q: "Châu Âu hiện có mức độ đô thị hóa như thế nào?", 
+        a: ["Thấp", "Trung bình", "Cao", "Rất thấp"], 
+        c: 2, 
+        n: "Châu Âu hiện có mức độ đô thị hóa cao với 75% số dân sống trong các đô thị (năm 2020) [4]."
+    },
+    {
+        q: "Quá trình đô thị hóa ở châu Âu phát triển mạnh mẽ nhất vào thời gian nào?", 
+        a: ["Thời cổ đại", "Thời trung đại", "Nửa cuối thế kỉ XVIII", "Sau năm 2000"], 
+        c: 2, 
+        n: "Đô thị hóa phát triển mạnh mẽ dưới tác động của cuộc cách mạng công nghiệp ở Anh vào nửa cuối thế kỉ XVIII [4]."
+    },
+    {
+        q: "Dân cư châu Âu tập trung đông đúc nhất ở những vùng nào?", 
+        a: ["Vùng núi cao", "Các đồng bằng, thung lũng lớn và vùng duyên hải", "Vùng phía bắc", "Hoang mạc"], 
+        c: 1, 
+        n: "Dân cư tập trung đông ở các đồng bằng, thung lũng lớn và các vùng ven biển [3]."
+    },
+    {
+        q: "Vùng nào ở châu Âu có dân cư phân bố thưa thớt nhất?", 
+        a: ["Vùng duyên hải", "Phía nam lục địa", "Vùng có khí hậu lạnh giá phía bắc", "Trung tâm các đô thị"], 
+        c: 2, 
+        n: "Dân cư phân bố thưa thớt ở những vùng có khí hậu lạnh giá phía bắc [3]."
+    },
+    {
+        q: "Đô thị hóa ở châu Âu hiện nay đang có xu hướng gì mới?", 
+        a: ["Dân dời bỏ thành phố", "Mở rộng các đô thị về phía ngoại thành", "Ngừng xây dựng đô thị", "Tập trung hết vào vùng núi"], 
+        c: 1, 
+        n: "Hiện nay, sự phát triển sản xuất công nghiệp và dịch vụ đã thúc đẩy mở rộng các đô thị về phía ngoại thành [4]."
+    },
+    {
+        q: "Đô thị nào sau đây có quy mô dân số trên 5 triệu người ở châu Âu?", 
+        a: ["Luân Đôn, Pa-ri, Mát-xcơ-va", "Béc-lin, Ma-đrít", "Rô-ma, Viên", "A-ten, Praha"], 
+        c: 0, 
+        n: "Các đô thị lớn như Luân Đôn, Pa-ri, Mát-xcơ-va... là những trung tâm dân cư hiện đại [3]."
+    },
+    {
+        q: "Lối sống đô thị đã trở nên phổ biến ở châu Âu do yếu tố nào?", 
+        a: ["Do thiếu đất nông nghiệp", "Do trình độ học vấn và văn hóa dân cư cao", "Do ép buộc", "Do khí hậu"], 
+        c: 1, 
+        n: "Lối sống đô thị trở nên phổ biến nhờ trình độ học vấn, văn hóa và hạ tầng hiện đại [4]."
+    },
+    {
+        q: "Dân số già gây ra khó khăn gì cho sự phát triển kinh tế châu Âu?", 
+        a: ["Thừa lao động", "Thiếu hụt nguồn lao động trong tương lai", "Quá nhiều trẻ em", "Không có khó khăn gì"], 
+        c: 1, 
+        n: "Dân số già ảnh hưởng đến lực lượng lao động và gây áp lực lên phúc lợi xã hội [1, 2]."
+    },
+    {
+        q: "Thực vật lấy khí CO2, nước và năng lượng ánh sáng để tạo ra chất gì?", 
+        a: ["Khí Oxy", "Đường glucose", "Muối khoáng", "Cát"], 
+        c: 1, 
+        n: "Bé Sen nhắc bạn: Theo video KHTN, quá trình quang hợp giúp cây tổng hợp đường glucose để tồn tại [5]."
+    },
+    {
+        q: "Hiện tượng 'lens flares' xảy ra khi camera đối diện với nguồn sáng nào?", 
+        a: ["Bóng tối", "Nguồn sáng đặc biệt mạnh", "Nước", "Cây xanh"], 
+        c: 1, 
+        n: "Bé Sen nhắc bạn: Đó là hiện tượng lóe sáng hoặc các vệt disc xuất hiện khi ống kính hướng về nguồn sáng mạnh [5]."
+    }
+],
+"bài 3 địa lý": [
+    {
+        q: "Các quốc gia ở châu Âu hướng đến mục tiêu gì trong việc khai thác và sử dụng thiên nhiên?", 
+        a: ["Khai thác tối đa tài nguyên", "Phát triển lâu dài và bền vững", "Chỉ tập trung vào công nghiệp", "Không khai thác tài nguyên"], 
+        c: 1, 
+        n: "Châu Âu luôn hướng tới mục tiêu bảo vệ môi trường để duy trì sự phát triển lâu dài [3]."
+    },
+    {
+        q: "Lượng nước từ sông và nước ngầm cung cấp cho sinh hoạt và sản xuất ở châu Âu chiếm khoảng bao nhiêu %?", 
+        a: ["50%", "75%", "88%", "100%"], 
+        c: 2, 
+        n: "Nguồn nước cung cấp cho sinh hoạt và sản xuất ở châu Âu rất phong phú, trong đó sông và nước ngầm chiếm khoảng 88% [3]."
+    },
+    {
+        q: "Ngành kinh tế nào ở châu Âu sử dụng nhiều nước ngọt nhất (chiếm hơn 60% tổng lượng)?", 
+        a: ["Công nghiệp", "Dịch vụ", "Nông nghiệp, lâm nghiệp và thuỷ sản", "Giao thông vận tải"], 
+        c: 2, 
+        n: "Nông nghiệp, lâm nghiệp và thuỷ sản là ngành sử dụng nước ngọt nhiều nhất, chiếm hơn 60% tổng lượng [3]."
+    },
+    {
+        q: "Trước đây, nguyên nhân chính khiến nguồn nước ở châu Âu bị ô nhiễm là do đâu?", 
+        a: ["Do hạn hán", "Do rác thải nhựa", "Do sản xuất công nghiệp và sinh hoạt", "Do đánh bắt cá quá mức"], 
+        c: 2, 
+        n: "Sản xuất công nghiệp và sinh hoạt trước đây đã làm môi trường nước ở châu Âu bị ô nhiễm [3]."
+    },
+    {
+        q: "Biện pháp nào sau đây giúp các nước châu Âu cải thiện chất lượng nguồn nước?", 
+        a: ["Tăng cường khai thác nước ngầm", "Đổi mới công nghệ xử lý nước thải", "Ngừng sản xuất nông nghiệp", "Xả thải trực tiếp ra biển"], 
+        c: 1, 
+        n: "Các nước đã cải thiện chất lượng nước bằng cách ban hành quy định nghiêm ngặt và đổi mới công nghệ xử lý [3]."
+    },
+    {
+        q: "Hoạt động nào sau đây là nguồn gây ô nhiễm không khí đáng kể ở châu Âu?", 
+        a: ["Trồng rừng", "Giao thông vận tải và sản xuất công nghiệp", "Sử dụng năng lượng mặt trời", "Đi bộ"], 
+        c: 1, 
+        n: "Giao thông vận tải, sản xuất công nghiệp và điện là những nguồn gây ô nhiễm không khí chính [4]."
+    },
+    {
+        q: "So với năm 2005, tỉ lệ phát thải khí SO2 ở châu Âu năm 2019 đã giảm xuống còn bao nhiêu %?", 
+        a: ["100%", "71%", "58%", "24%"], 
+        c: 3, 
+        n: "Nhờ các biện pháp bảo vệ, khí SO2 đã giảm mạnh, năm 2019 chỉ còn bằng 24% so với năm 2005 [4]."
+    },
+    {
+        q: "Châu Âu đã giảm sử dụng các nguồn nhiên liệu nào để hạn chế ô nhiễm không khí trong sản xuất điện?", 
+        a: ["Than đá, dầu mỏ", "Năng lượng gió", "Năng lượng mặt trời", "Thủy điện"], 
+        c: 0, 
+        n: "Việc giảm sử dụng than đá và dầu mỏ đã giúp làm sạch khí thải nhà máy điện [4]."
+    },
+    {
+        q: "Biện pháp bảo vệ không khí nào được áp dụng tại các thành phố ở châu Âu?", 
+        a: ["Cấm hoàn toàn xe máy", "Xây dựng các khu phát thải thấp", "Đóng cửa tất cả nhà máy", "Ngừng sử dụng điện"], 
+        c: 1, 
+        n: "Xây dựng các khu phát thải thấp giúp hạn chế nguồn khí thải từ phương tiện giao thông [4]."
+    },
+    {
+        q: "Tỉ lệ che phủ rừng bình quân của châu Âu vào năm 2020 đạt khoảng bao nhiêu %?", 
+        a: ["20%", "31%", "35%", "66%"], 
+        c: 2, 
+        n: "Tỉ lệ che phủ rừng bình quân ở châu Âu ngày càng tăng và đạt 35% vào năm 2020 [5]."
+    },
+    {
+        q: "Quốc gia nào có tỉ lệ che phủ rừng cao nhất châu Âu (năm 2020) theo số liệu thống kê?", 
+        a: ["Pháp", "Đức", "Thụy Điển", "Phần Lan"], 
+        c: 3, 
+        n: "Phần Lan dẫn đầu với tỉ lệ che phủ rừng đạt tới 66% [5]."
+    },
+    {
+        q: "Rừng có vai trò gì quan trọng đối với môi trường châu Âu?", 
+        a: ["Cung cấp đất xây dựng", "Điều hoà khí hậu, giữ đất, giữ nước", "Tăng nhiệt độ không khí", "Làm hẹp diện tích ở"], 
+        c: 1, 
+        n: "Rừng góp phần quan trọng trong việc điều hòa khí hậu và bảo vệ nguồn nước, sinh vật [5]."
+    },
+    {
+        q: "Biện pháp nào sau đây giúp châu Âu bảo vệ đa dạng sinh học?", 
+        a: ["Khai thác trắng các khu rừng", "Thành lập các khu bảo tồn thiên nhiên", "Tăng cường dùng hóa chất nông nghiệp", "Nhập khẩu sinh vật lạ"], 
+        c: 1, 
+        n: "Thành lập các khu bảo tồn và quản lý rừng chặt chẽ là biện pháp hữu hiệu để bảo vệ đa dạng sinh học [5]."
+    },
+    {
+        q: "Việc xây dựng vành đai xanh quanh các khu vực đô thị ở châu Âu nhằm mục đích gì?", 
+        a: ["Để làm nơi đổ rác", "Để ngăn cách các thành phố", "Bảo vệ môi trường sống và sinh vật", "Để mở đường cao tốc"], 
+        c: 2, 
+        n: "Xây dựng vành đai xanh quanh đô thị giúp duy trì môi trường sống cho các loài sinh vật [5]."
+    },
+    {
+        q: "Các quốc gia châu Âu đã áp dụng biện pháp gì để giảm thiểu ô nhiễm từ sản xuất nông nghiệp?", 
+        a: ["Ngừng trồng trọt", "Phát triển nông nghiệp sinh thái", "Chỉ trồng cây trong nhà", "Dùng nhiều phân bón hoá học"], 
+        c: 1, 
+        n: "Phát triển nông nghiệp sinh thái giúp giảm thiểu ô nhiễm đáng kể từ chất thải sản xuất [4]."
+    },
+    {
+        q: "Lượng khí thải NH3 ở châu Âu từ năm 2005 đến 2019 có xu hướng như thế nào?", 
+        a: ["Tăng gấp đôi", "Giảm nhẹ (còn 92%)", "Giảm mạnh còn 24%", "Không thay đổi"], 
+        c: 1, 
+        n: "Dựa vào biểu đồ 3.2, khí NH3 đã giảm xuống còn 92% so với năm 2005 [4]."
+    },
+    {
+        q: "Thực vật cần lấy những yếu tố nào từ môi trường để thực hiện quá trình quang hợp?", 
+        a: ["Khí Oxy và muối", "Khí CO2, nước và năng lượng", "Đất và đường", "Chỉ cần ánh sáng"], 
+        c: 1, 
+        n: "Bé Sen nhắc bạn: Để tồn tại, cây cối phải lấy khí CO2, nước và năng lượng để tổng hợp chất dinh dưỡng [1]."
+    },
+    {
+        q: "Quá trình thực vật sử dụng để tổng hợp đường glucose được gọi là gì?", 
+        a: ["Hô hấp", "Thoát hơi nước", "Quang hợp", "Lên men"], 
+        c: 2, 
+        n: "Bé Sen nhắc bạn: Quang hợp là quá trình quan trọng giúp cây xanh tạo ra chất hữu cơ [1]."
+    },
+    {
+        q: "Hiện tượng 'ghostly eclipse images' (hình ảnh nhật thực ma quái) trong camera là gì?", 
+        a: ["Linh hồn", "Lens flares (Lóe sáng ống kính)", "Nhật thực thật", "Lỗi chip xử lý"], 
+        c: 1, 
+        n: "Bé Sen nhắc bạn: Đó thực chất là hiện tượng lóe sáng khi camera hướng về nguồn sáng đặc biệt mạnh [1]."
+    },
+    {
+        q: "Hiện tượng lens flares thường tạo ra hình ảnh gì trong bức ảnh chụp?", 
+        a: ["Chỉ có màu đen", "Vùng sáng, vệt sáng hoặc hình đĩa", "Hình ảnh mờ đi", "Không tạo ra gì"], 
+        c: 1, 
+        n: "Bé Sen nhắc bạn: Lens flares tạo ra các vệt sáng hoặc hình đĩa khi hướng camera vào nguồn sáng mạnh [1]."
+    }
+],
+"bài 4 địa lý": [
+    {
+        q: "Liên minh châu Âu (EU) có bao nhiêu quốc gia thành viên vào năm 2020?", 
+        a: ["25 quốc gia", "27 quốc gia", "28 quốc gia", "30 quốc gia"], 
+        c: 1, 
+        n: "Đến năm 2020, sau khi Anh rời khỏi Liên minh châu Âu, tổ chức này còn 27 quốc gia thành viên [2, 5]."
+    },
+    {
+        q: "Diện tích của Liên minh châu Âu năm 2020 là khoảng bao nhiêu?", 
+        a: ["4,1 triệu km2", "10,5 triệu km2", "44,4 triệu km2", "30 triệu km2"], 
+        c: 0, 
+        n: "Diện tích của EU vào năm 2020 đạt khoảng 4,1 triệu km2 [2]."
+    },
+    {
+        q: "Số dân của Liên minh châu Âu năm 2020 đạt khoảng bao nhiêu triệu người?", 
+        a: ["370,5 triệu người", "447,7 triệu người", "747,6 triệu người", "800 triệu người"], 
+        c: 1, 
+        n: "Số dân của EU vào năm 2020 là 447,7 triệu người [2]."
+    },
+    {
+        q: "Tiền thân của Liên minh châu Âu là tổ chức nào?", 
+        a: ["Cộng đồng Than Thép châu Âu", "Cộng đồng Kinh tế châu Âu (EEC)", "Hiệp hội các quốc gia Đông Nam Á", "Tổ chức Thương mại Thế giới"], 
+        c: 1, 
+        n: "Tiền thân của Liên minh châu Âu là Cộng đồng Kinh tế châu Âu (EEC) [5]."
+    },
+    {
+        q: "Cộng đồng Kinh tế châu Âu (EEC) được thành lập ban đầu với bao nhiêu quốc gia thành viên?", 
+        a: ["3 quốc gia", "6 quốc gia", "12 quốc gia", "15 quốc gia"], 
+        c: 1, 
+        n: "EEC được thành lập ban đầu với 6 quốc gia thành viên là Đức, Pháp, I-ta-li-a, Hà Lan, Bỉ và Lúc-xem-bua [5]."
+    },
+    {
+        q: "Quốc gia nào sau đây KHÔNG nằm trong 6 thành viên sáng lập Cộng đồng Kinh tế châu Âu?", 
+        a: ["Đức", "Pháp", "Anh", "Hà Lan"], 
+        c: 2, 
+        n: "Các nước sáng lập gồm Đức, Pháp, I-ta-li-a, Hà Lan, Bỉ, Lúc-xem-bua. Anh gia nhập sau này và đã rời EU năm 2020 [5]."
+    },
+    {
+        q: "Năm 2020, GDP của Liên minh châu Âu đứng thứ mấy trong các nền kinh tế lớn của thế giới?", 
+        a: ["Thứ nhất", "Thứ hai", "Thứ ba", "Thứ tư"], 
+        c: 1, 
+        n: "Với GDP đạt hơn 15 nghìn tỉ USD năm 2020, EU xếp thứ hai thế giới sau Hoa Kỳ [5]."
+    },
+    {
+        q: "Đồng tiền chung của Liên minh châu Âu có tên là gì?", 
+        a: ["Đô la", "Bảng", "Ơ-rô (Euro)", "Yên"], 
+        c: 2, 
+        n: "Đồng tiền chung châu Âu (Ơ-rô) là đơn vị tiền tệ chính thức của nhiều quốc gia thành viên [5]."
+    },
+    {
+        q: "Đồng tiền chung Ơ-rô bắt đầu được Liên minh châu Âu đưa vào sử dụng từ năm nào?", 
+        a: ["Năm 1990", "Năm 2000", "Năm 2002", "Năm 2020"], 
+        c: 2, 
+        n: "Đồng Ơ-rô bắt đầu được sử dụng từ năm 2002 [5]."
+    },
+    {
+        q: "Tính đến năm 2020, có bao nhiêu quốc gia thành viên EU sử dụng đồng Ơ-rô là đồng tiền chính thức?", 
+        a: ["15 quốc gia", "19 quốc gia", "27 quốc gia", "20 quốc gia"], 
+        c: 1, 
+        n: "Tính đến năm 2020, có 19 quốc gia thành viên sử dụng đồng Ơ-rô là đồng tiền chính thức của mình [5]."
+    },
+    {
+        q: "Liên minh châu Âu là trung tâm hàng đầu thế giới về các lĩnh vực nào?", 
+        a: ["Chỉ có nông nghiệp", "Dịch vụ và công nghiệp", "Khai thác khoáng sản", "Chăn nuôi gia súc"], 
+        c: 1, 
+        n: "EU là trung tâm dịch vụ và công nghiệp hàng đầu thế giới, giữ vai trò quan trọng trong tài chính - ngân hàng, vận tải, truyền thông [5]."
+    },
+    {
+        q: "Đối tác kinh tế lớn nhất của Liên minh châu Âu là các quốc gia thuộc khu vực nào?", 
+        a: ["Bắc Mỹ và châu Á - Thái Bình Dương", "Nam Mỹ", "Châu Phi", "Châu Nam Cực"], 
+        c: 0, 
+        n: "Đối tác kinh tế lớn nhất của EU là các quốc gia ở Bắc Mỹ và châu Á – Thái Bình Dương [5]."
+    },
+    {
+        q: "Liên minh châu Âu được đánh giá là một cộng đồng đa dạng về các yếu tố nào?", 
+        a: ["Chỉ đa dạng về ngôn ngữ", "Chỉ đa dạng về tôn giáo", "Văn hoá, ngôn ngữ, tôn giáo", "Địa hình núi cao"], 
+        c: 2, 
+        n: "EU là một cộng đồng đa dạng về văn hoá, ngôn ngữ và tôn giáo [2]."
+    },
+    {
+        q: "Năm 2020, quốc gia nào có GDP cao nhất thế giới theo bảng số liệu trong bài?", 
+        a: ["Trung Quốc", "Nhật Bản", "Hoa Kỳ", "Liên minh châu Âu"], 
+        c: 2, 
+        n: "Theo bảng số liệu 2020, Hoa Kỳ có GDP cao nhất với 20 893,7 tỉ USD [5]."
+    },
+    {
+        q: "Vai trò của Liên minh châu Âu trong nền kinh tế thế giới là gì?", 
+        a: ["Không quan trọng", "Là một trong bốn trung tâm kinh tế lớn nhất", "Chỉ quan trọng ở châu Âu", "Là trung tâm kinh tế duy nhất"], 
+        c: 1, 
+        n: "Liên minh châu Âu là một trong bốn trung tâm kinh tế lớn của thế giới [2, 5]."
+    },
+    {
+        q: "Hoạt động kinh tế nào sau đây là thế mạnh của Liên minh châu Âu?", 
+        a: ["Sản xuất công nghệ cao", "Tài chính - ngân hàng", "Giao thông vận tải", "Tất cả các phương án trên"], 
+        c: 3, 
+        n: "EU giữ vai trò quan trọng trong tài chính – ngân hàng, giao thông vận tải, truyền thông và công nghiệp công nghệ cao [5]."
+    },
+    {
+        q: "Việc thiết lập Liên minh châu Âu giúp khu vực này như thế nào trên thế giới?", 
+        a: ["Bị chia rẽ hơn", "Trở thành một khu vực kinh tế thống nhất và quan trọng", "Chỉ tập trung vào quân sự", "Không có thay đổi gì"], 
+        c: 1, 
+        n: "Việc thành lập EU giúp châu Âu trở thành một khu vực kinh tế thống nhất và quan trọng trên thế giới [2]."
+    },
+    {
+        q: "Theo video KHTN, quá trình thực vật tổng hợp đường glucose được gọi là gì?", 
+        a: ["Hô hấp", "Quang hợp", "Thoát hơi nước", "Lên men"], 
+        c: 1, 
+        n: "Bé Sen nhắc bạn: Quá trình cây xanh lấy CO2, nước và năng lượng để tạo glucose gọi là quang hợp [3]."
+    },
+    {
+        q: "Hiện tượng 'ghostly eclipse images' (hình ảnh nhật thực ma quái) trong camera thực chất là gì?", 
+        a: ["Linh hồn", "Lens flares (Lóe sáng ống kính)", "Nhật thực thật", "Lỗi chip xử lý"], 
+        c: 1, 
+        n: "Bé Sen nhắc bạn: Đó thực chất là hiện tượng lóe sáng khi camera hướng về nguồn sáng đặc biệt mạnh [3]."
+    },
+    {
+        q: "Hiện tượng lens flares thường tạo ra hình ảnh gì khi chụp ảnh về phía nguồn sáng mạnh?", 
+        a: ["Chỉ có màu đen", "Vùng sáng, vệt sáng hoặc hình đĩa", "Hình ảnh bị mờ hoàn toàn", "Không có hình ảnh"], 
+        c: 1, 
+        n: "Bé Sen nhắc bạn: Lens flares tạo ra các vùng sáng, vệt sáng hoặc các hình đĩa (streaks/discs) trong ảnh [3]."
+    }
+]
+    };
+
+    let currentQ = 0;
+    let score = 0;
+    let activeLesson = [];
+
+    function showPage(pageId) {
+        document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+        document.getElementById(pageId).classList.add('active');
+    }
+
+    function startQuiz(lessonKey) {
+        activeLesson = gameDatabase[lessonKey] || [];
+        if(activeLesson.length === 0) { alert("Bài học này đang được cập nhật!"); return; }
+        
+        showPage('quiz-page');
+        currentQ = 0;
+        score = 0;
+        document.getElementById('quiz-title').innerText = "Thử thách: " + lessonKey.toUpperCase();
+        loadQuestion();
+    }
+
+    function loadQuestion() {
+        const data = activeLesson[currentQ];
+        document.getElementById('question-text').innerText = `Câu ${currentQ + 1}: ${data.q}`;
+        const area = document.getElementById('options-area');
+        area.innerHTML = '';
+        
+        data.a.forEach((opt, i) => {
+            const btn = document.createElement('button');
+            btn.className = 'opt-btn';
+            btn.innerText = opt;
+            btn.onclick = () => checkAnswer(i, btn);
+            area.appendChild(btn);
+        });
+        document.getElementById('besen-feedback').style.display = 'none';
+    }
+
+    function checkAnswer(idx, btn) {
+        const correctIdx = activeLesson[currentQ].c;
+        const feedback = document.getElementById('besen-feedback');
+        const text = document.getElementById('feedback-text');
+        
+        // Khóa các nút để tránh bấm nhiều lần
+        const allBtns = document.querySelectorAll('.opt-btn');
+        allBtns.forEach(b => b.style.pointerEvents = 'none');
+
+        if(idx === correctIdx) {
+            btn.classList.add('correct');
+            score++;
+            text.innerHTML = `<strong>Bé Sen:</strong> Tuyệt vời! ${activeLesson[currentQ].n}`;
+        } else {
+            btn.classList.add('wrong');
+            allBtns[correctIdx].classList.add('correct'); // Hiện đáp án đúng
+            text.innerHTML = `<strong>Bé Sen:</strong> Ồ! Đáp án đúng là <b>${activeLesson[currentQ].a[correctIdx]}</b>. ${activeLesson[currentQ].n}`;
+        }
+        feedback.style.display = 'flex';
+        
+        setTimeout(() => {
+            currentQ++;
+            if(currentQ < activeLesson.length) {
+                loadQuestion();
+            } else {
+                showResultNotification();
+            }
+        }, 3000);
+    }
+
+    function showResultNotification() {
+        document.getElementById('result-overlay').style.display = 'flex';
+        document.getElementById('final-score').innerText = `${score}/${activeLesson.length}`;
+        
+        let msg = "";
+        const percent = (score / activeLesson.length) * 100;
+        if(percent === 100) msg = "Xuất sắc! Bạn quả là một nhà thông thái!";
+        else if(percent >= 70) msg = "Làm tốt lắm! Bạn đã nắm vững kiến thức rồi đấy.";
+        else msg = "Cố gắng lên nhé! Bé Sen sẽ luôn đồng hành cùng bạn.";
+        
+        document.getElementById('modal-message').innerText = msg;
+    }
+
+    function closeResult() {
+        document.getElementById('result-overlay').style.display = 'none';
+        showPage('history');
+    }
+
+  
+
+     const knowledgeBase = [
+        {
+            keys: ["nhà lý", "thăng long", "lý công uẩn"],
+            ans: "Năm 1010, vua **Lý Thái Tổ** dời đô từ Hoa Lư về Đại La, đổi tên là **Thăng Long** [6]. Đây là nơi 'thượng đô kinh sư mãi muôn đời', mở ra thời kỳ phát triển rực rỡ [11].",
+            page: "Nguồn: Lịch sử 7 - Bài 15"
+        },
+        {
+            keys: ["nhà trần", "kháng chiến mông nguyên"],
+            ans: "Nhà Trần (1226-1400) nổi tiếng với ba lần chiến thắng quân xâm lược Mông - Nguyên ở thế kỷ XIII [12]. Tinh thần đoàn kết của quân dân thời này được gọi là **'Hào khí Đông A'** [13].",
+            page: "Nguồn: Lịch sử 7 - Bài 16, 17"
+        },
+        {
+            keys: ["phát kiến địa lý", "cô-lôm-bô", "ma-giên-lăng"],
+            ans: "Các cuộc đại phát kiến địa lý tiêu biểu gồm: **C. Cô-lôm-bô** tìm ra châu Mỹ (1492) [14] và đoàn thám hiểm của **Ma-giên-lăng** đi vòng quanh thế giới đầu tiên (1519-1522) [15].",
+            page: "Nguồn: Lịch sử 7 - Chủ đề chung 1"
+        },
+        {
+            keys: ["châu á", "diện tích châu á", "ê-vơ-rét"],
+            ans: "Châu Á là châu lục rộng lớn nhất thế giới với diện tích phần đất liền khoảng 41,5 triệu km2 [16]. Nơi đây có dãy Hy-ma-lay-a với đỉnh **Ê-vơ-rét** cao nhất thế giới [17].",
+            page: "Nguồn: Địa lý 7 - Bài 5"
+        },
+        {
+            keys: ["quang hợp", "glucose", "cây xanh"],
+            ans: "Quá trình thực vật sử dụng khí CO2, nước và năng lượng ánh sáng để tổng hợp đường **glucose** được gọi là **quang hợp** [10].",
+            page: "Nguồn: Video Học tốt KHTN"
+        }
+    ];
+
+    function sendMessage() {
+        const input = document.getElementById('userInput');
+        const box = document.getElementById('chat-body');
+        const query = input.value.trim().toLowerCase();
+
+        if (!query) return;
+
+        box.innerHTML += `<div class="msg user-msg">${input.value}</div>`;
+
+        let reply = "Bé Sen chưa tìm thấy thông tin này trong bộ tài liệu Lớp 7 hiện có. Bạn hãy thử hỏi về các triều đại phong kiến Việt Nam hoặc địa hình các châu lục xem sao nhé!";
+        let source = "";
+
+        for (let item of knowledgeBase) {
+            if (item.keys.some(k => query.includes(k))) {
+                reply = item.ans;
+                source = item.page;
+                break;
+            }
+        }
+
+        setTimeout(() => {
+            box.innerHTML += `
+                <div class="msg ai-msg">
+                    ${reply}
+                    ${source ? `<span class="source-tag">${source}</span>` : ""}
+                </div>`;
+            box.scrollTop = box.scrollHeight;
+        }, 500);
+
+        input.value = "";
+    }
+</script>
+</body>
+</html>
