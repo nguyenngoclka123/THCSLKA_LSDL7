@@ -3,273 +3,354 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quỹ đạo Trái Đất - Bé Sen Thông Thái</title>
+    <title>Mô phỏng 3D - Quỹ đạo Trái Đất</title>
     <style>
         :root {
-            --space-bg: #030a1a;
-            --sun-glow: radial-gradient(circle, #fff 0%, #ffbb00 30%, #ff4400 60%, transparent 100%);
-            --accent: #00d4ff;
-            --lotus-pink: #ff80ab; /* Màu hồng sen cho viền icon */
+            --bg-color: #030a1a;
+            --sun-color: #ff9900;
+            --sun-glow: #ffcc00;
+            --earth-color: #1e3f66;
+            --earth-edge: #4da6ff;
+            --text-color: #cceeff;
+            --ui-bg: rgba(0, 20, 40, 0.8);
+            --ui-border: #00d4ff;
+            --font-main: 'Segoe UI', Arial, sans-serif;
+            --lotus-pink: #ff80ab;
         }
 
         body {
             margin: 0;
-            background-color: var(--space-bg);
-            color: white;
-            font-family: 'Segoe UI', Arial, sans-serif;
-            overflow: hidden;
-            display: flex;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: var(--font-main);
             height: 100vh;
-        }
-
-        /* --- Sidebar Mục lục --- */
-        .sidebar {
-            width: 260px;
-            background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(10px);
-            border-right: 1px solid rgba(0, 212, 255, 0.2);
-            padding: 20px;
-            z-index: 10;
-            overflow-y: auto;
-        }
-
-        .sidebar h2 { color: var(--accent); font-size: 1.1rem; text-transform: uppercase; }
-        .sidebar h3 { font-size: 0.9rem; color: #aaa; margin-top: 20px; }
-        .sidebar a {
-            display: block;
-            color: #ddd;
-            text-decoration: none;
-            padding: 8px;
-            font-size: 0.85rem;
-            border-radius: 4px;
-            transition: 0.3s;
-        }
-        .sidebar a:hover { background: rgba(0, 212, 255, 0.2); color: var(--accent); }
-
-        /* --- Không gian mô phỏng 3D --- */
-        .universe {
-            flex: 1;
-            position: relative;
+            overflow: hidden; /* Giữ nguyên để toàn cảnh không bị thanh cuộn */
             display: flex;
             justify-content: center;
             align-items: center;
-            perspective: 1500px;
+            perspective: 2000px;
+        }
+
+        /* --- 3D Scene --- */
+        .universe {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
 
         .sun {
-            width: 80px;
-            height: 80px;
-            background: var(--sun-glow);
+            width: 120px;
+            height: 120px;
+            background: radial-gradient(circle, #ffffff 10%, var(--sun-color) 60%, transparent 100%);
             border-radius: 50%;
-            box-shadow: 0 0 60px #ff6600;
-            cursor: pointer;
+            box-shadow: 0 0 80px var(--sun-glow);
             z-index: 5;
         }
 
-        /* Quỹ đạo */
-        .orbit {
+        .orbit-container {
             position: absolute;
-            width: 500px;
-            height: 300px;
-            border: 1px dashed rgba(255, 255, 255, 0.2);
+            width: 700px;
+            height: 400px;
+            border: 1px dashed rgba(255, 255, 255, 0.15);
             border-radius: 50%;
             display: flex;
             justify-content: center;
             align-items: center;
-            animation: rotateOrbit 20s linear infinite;
             transform-style: preserve-3d;
+            animation: rotateOrbit 25s linear infinite; 
         }
 
-        /* Trái Đất */
-        .earth-system {
+        .earth-group {
             position: absolute;
-            right: -25px;
+            right: -30px;
             display: flex;
             flex-direction: column;
             align-items: center;
-            animation: counterRotate 20s linear infinite;
+            animation: counterRotate 25s linear infinite; 
         }
 
         .earth {
-            width: 50px;
-            height: 50px;
-            background: url('https://upload.wikimedia.org/wikipedia/commons/c/cb/The_Blue_Marble_transp.png') no-repeat center;
-            background-size: contain;
+            width: 60px;
+            height: 60px;
+            background-color: var(--earth-color);
+            background-image: url('https://upload.wikimedia.org/wikipedia/commons/c/cb/The_Blue_Marble_transp.png'); /* Cần mạng */
+            background-size: cover;
+            background-position: center;
             border-radius: 50%;
-            box-shadow: inset -5px -5px 15px #000, 0 0 15px var(--accent);
+            box-shadow: inset -10px -10px 20px rgba(0,0,0,0.8), 0 0 20px var(--earth-edge);
             transform: rotateX(23.5deg);
         }
 
+        .earth-label {
+            margin-top: 8px;
+            font-size: 0.8rem;
+            color: var(--text-color);
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
         @keyframes rotateOrbit {
-            from { transform: rotateX(70deg) rotateZ(0deg); }
-            to { transform: rotateX(70deg) rotateZ(360deg); }
+            from { transform: rotateX(75deg) rotateZ(0deg); }
+            to { transform: rotateX(75deg) rotateZ(360deg); }
         }
 
         @keyframes counterRotate {
-            from { transform: rotateZ(0deg) rotateX(-70deg); }
-            to { transform: rotateZ(-360deg) rotateX(-70deg); }
+            from { transform: rotateZ(0deg) rotateX(-75deg); }
+            to { transform: rotateZ(-360deg) rotateX(-75deg); }
         }
 
-        /* --- Hiệu ứng Lens Flare --- */
-        #flare-layer {
+        /* --- UI Controls --- */
+        .ui-controls {
             position: fixed;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            pointer-events: none;
-            background: radial-gradient(circle at 50% 50%, rgba(255,255,255,0.3) 0%, transparent 5%),
-                        radial-gradient(circle at 45% 45%, rgba(0,212,255,0.1) 0%, transparent 10%);
-            display: none;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 20px;
+            background-color: var(--ui-bg);
+            padding: 15px 30px;
+            border-radius: 50px;
+            border: 2px solid var(--ui-border);
+            box-shadow: 0 0 30px rgba(0, 212, 255, 0.4);
             z-index: 100;
         }
 
-        /* --- Mascot Bé Sen & Bong bóng thoại (Bên trái) --- */
+        .control-btn {
+            background: transparent;
+            border: 1px solid var(--ui-border);
+            color: var(--ui-border);
+            padding: 10px 25px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .control-btn:hover {
+            background-color: var(--ui-border);
+            color: #000;
+            box-shadow: 0 0 15px var(--ui-border);
+        }
+
+        /* --- Info Panel --- */
+        .info-panel {
+            position: fixed;
+            top: 40px;
+            right: 40px;
+            width: 250px;
+            background-color: var(--ui-bg);
+            border: 2px solid var(--ui-border);
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 0 30px rgba(0, 212, 255, 0.3);
+            z-index: 100;
+        }
+
+        .info-panel h2 {
+            margin-top: 0;
+            font-size: 1.1rem;
+            color: var(--ui-border);
+            text-transform: uppercase;
+            border-bottom: 1px solid var(--ui-border);
+            padding-bottom: 10px;
+            margin-bottom: 15px;
+        }
+
+        .info-panel p {
+            font-size: 0.9rem;
+            line-height: 1.6;
+            color: #b0e0f0;
+        }
+
+        .speed-slider-container {
+            margin-top: 20px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            padding-top: 15px;
+        }
+
+        .speed-slider-container label {
+            display: block;
+            font-size: 0.8rem;
+            margin-bottom: 5px;
+            color: #88bbcc;
+        }
+
+        .speed-slider {
+            width: 100%;
+            cursor: pointer;
+        }
+
+        /* --- 2. Cải tiến khu vực Mascot - Đưa thông báo về bên phải phía trên --- */
         .mascot-area {
             position: fixed;
-            bottom: 20px;
-            left: 20px;
-            width: 280px;
+            bottom: 0px;
+            left:50px; /* SỬA QUAN TRỌNG TẠI ĐÂY: Di chuyển mascot qua trái */
             display: flex;
-            flex-direction: column;
-            align-items: flex-start;
-            z-index: 20;
+            align-items: flex-end; /* Căn lề dưới */
+            gap: 15px; /* Khoảng cách giữa ảnh và hội thoại */
+            z-index: 100;
+            pointer-events: none; /* Tránh mascot che mất các nút bấm bên dưới nếu ảnh quá lớn */
         }
 
-        .bubble {
-            background: white;
-            color: #222;
-            padding: 12px;
-            border-radius: 15px;
-            font-size: 0.9rem;
-            margin-bottom: 15px; /* Tăng khoảng cách với icon */
-            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+        .mascot-img-container {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            border: 5px solid var(--lotus-pink);
+            background-color: #fff;
+            box-shadow: 0 0 25px rgba(255, 128, 171, 0.6);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            
+            overflow: visible; /* Cho phép hình ảnh tràn ra ngoài vòng tròn nếu cần */
+        }
+
+        .mascot-img {
+            width: 100%; 
+            height: 100%;
+            object-fit: fill; /* Ép hình ảnh thu nhỏ lại để nằm trọn trong container */
+            border-radius: 50%; /* Giữ cho ảnh cũng tròn */
+            display: block;
+        }
+
+        .speech-bubble {
+            background-color: #fff;
+            color: #333;
+            padding: 15px 20px;
+            border-radius: 20px;
+            border-bottom-left-radius: 5px; /* Bo góc trái dưới để khớp đuôi bubble */
+            max-width: 250px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.4);
+            font-size: 0.95rem;
+            line-height: 1.4;
             position: relative;
+            pointer-events: auto; /* Bong bóng thoại vẫn nhận sự kiện chuột */
+            bottom: 120px; /* Di chuyển lên trên */
+			left:-50PX;
         }
 
-        .bubble::after {
+        /* Đuôi bong bóng thoại trỏ xuống Bé Sen */
+        .speech-bubble::after {
             content: '';
             position: absolute;
-            bottom: -10px; 
-            left: 30px; /* Căn chỉnh lại đuôi bong bóng cho khớp với icon tròn */
+            bottom: -10px; /* Di chuyển xuống dưới */
+            left: 10PX; /* Dịch sang trái */
+            border-top: 10px solid #fff;
             border-left: 10px solid transparent;
-            border-right: 10px solid transparent;
-            border-top: 10px solid white;
         }
 
-        /* --- ĐỊNH DẠNG ICON BÉ SEN ĐẸP HƠN --- */
-        .mascot-img { 
-            width: 80px;  /* Điều chỉnh kích thước icon */
-            height: 80px; /* Đảm bảo hình vuông để tạo hình tròn hoàn hảo */
-            object-fit: cover; /* Giữ tỷ lệ ảnh khi cắt */
-            border-radius: 50%; /* Tạo hình tròn */
-            border: 4px solid var(--lotus-pink); /* Thêm viền màu hồng sen */
-            box-shadow: 0 0 15px rgba(255, 128, 171, 0.7); /* Đổ bóng phát sáng màu hồng */
-            filter: drop-shadow(0 0 5px var(--accent)); /* Giữ hiệu ứng glow xanh nhẹ ban đầu */
-            margin-left: 10px;
-            transition: transform 0.3s ease; /* Thêm hiệu ứng khi hover */
-        }
-
-        .mascot-img:hover {
-            transform: scale(1.1) rotate(5deg); /* Phóng to và xoay nhẹ khi hover */
-        }
-
-        /* --- ĐƯA MENU RA GIỮA (Bên dưới) --- */
-        .controls {
-            position: fixed;
-            bottom: 20px;
-            /* Căn giữa theo chiều ngang */
-            left: 50%;
-            transform: translateX(-50%); 
-            
-            background: rgba(0,0,0,0.85);
-            padding: 15px 25px; /* Tăng padding ngang */
-            border-radius: 30px; /* Bo tròn panel menu */
-            border: 2px solid var(--accent); /* Viền đậm hơn */
-            display: flex;
-            gap: 15px; /* Tăng khoảng cách giữa các nút */
-            z-index: 30; /* Đảm bảo nằm trên cùng */
-            box-shadow: 0 5px 20px rgba(0, 212, 255, 0.4); /* Đổ bóng cho menu */
-        }
-
-        button {
-            background: transparent;
-            border: 1px solid var(--accent);
-            color: var(--accent);
-            padding: 10px 20px; /* Tăng kích thước nút */
-            cursor: pointer;
-            border-radius: 20px; /* Bo tròn nút */
-            font-weight: bold;
-            font-size: 0.9rem;
-            text-transform: uppercase; /* Chữ in hoa */
-            transition: 0.3s;
-            white-space: nowrap; /* Không cho chữ nhảy dòng */
-        }
-
-        button:hover { 
-            background: var(--accent); 
-            color: black; 
-            box-shadow: 0 0 10px var(--accent); /* Phát sáng khi hover */
-        }
     </style>
 </head>
 <body>
 
-    <div id="flare-layer"></div>
+    <div class="info-panel">
+        <h2>Hệ Mặt Trời</h2>
+        <p>Nhấn vào các nút bên dưới để khám phá kiến thức vũ trụ cùng Bé Sen!</p>
+        
+        <div class="speed-slider-container">
+            <label for="speedSlider">Tốc độ mô phỏng</label>
+            <input type="range" id="speedSlider" min="5" max="60" value="25" class="speed-slider">
+        </div>
+    </div>
 
     <main class="universe">
-        <div class="sun" onclick="showFlare()" title="Nhấn để xem Lens Flare"></div>
+        <div class="sun"></div>
         
-        <div class="orbit" id="orbit-path">
-            <div class="earth-system">
+        <div class="orbit-container" id="mainOrbit">
+            <div class="earth-group" id="earthSys">
                 <div class="earth"></div>
-                <p style="font-size: 0.7rem; margin-top: 5px; text-align: center;">Trái Đất</p>
+                <div class="earth-label">Trái Đất</div>
             </div>
-        </div>
-
-        <div class="mascot-area">
-            <div class="bubble" id="speech-bubble">
-                Chào bạn! Mình là Bé Sen. Bạn có biết Trái Đất hình tròn và tự quay quanh trục của nó không?
-            </div>
-            <img src="besen.jpg" alt="Bé Sen" class="mascot-img">
-        </div>
-
-        <div class="controls">
-            <button onclick="changeTopic('orbit')">Quỹ đạo</button>
-            <button onclick="changeTopic('sun')">Mặt trời</button>
-            <button onclick="changeTopic('axis')">Độ nghiêng</button>
-            <button onclick="toggleRotation()">Dừng/Quay</button>
         </div>
     </main>
 
+    <div class="mascot-area">
+        <div class="mascot-img-container">
+            <img src="besen.jpg" alt="Bé Sen Mascot" class="mascot-img">
+        </div>
+        <div class="speech-bubble" id="speechBubble">
+            Chào bạn! Mình là Bé Sen. Hãy cùng mình khám phá những điều thú vị về hành tinh xanh nhé!
+        </div>
+    </div>
+
+    <div class="ui-controls">
+        <button class="control-btn" id="btnOrbit">Quỹ đạo</button>
+        <button class="control-btn" id="btnSun">Mặt trời</button>
+        <button class="control-btn" id="btnAxis">Độ nghiêng</button>
+        <button class="control-btn" id="btnToggle">Tạm dừng</button>
+    </div>
+
     <script>
-        const bubble = document.getElementById('speech-bubble');
-        const flare = document.getElementById('flare-layer');
-        const orbitPath = document.getElementById('orbit-path');
+        // 1. Khai báo các biến để tham chiếu đến các phần tử HTML
+        const speechBubble = document.getElementById('speechBubble');
+        const orbitElement = document.getElementById('mainOrbit');
+        const earthSystem = document.getElementById('earthSys');
+        const btnToggle = document.getElementById('btnToggle');
+        const speedSlider = document.getElementById('speedSlider');
+
+        // Biến trạng thái để quản lý việc tạm dừng
         let isRotating = true;
 
-        function changeTopic(topic) {
-            if (topic === 'orbit') {
-                bubble.innerText = "Trái Đất mất khoảng 365 ngày để hoàn thành một vòng quanh Mặt Trời đấy!";
-            } else if (topic === 'sun') {
-                bubble.innerText = "Ánh sáng Mặt Trời mất khoảng 8 phút để đến Trái Đất.";
-            } else if (topic === 'axis') {
-                bubble.innerText = "Trục Trái Đất nghiêng 23.5 độ tạo ra các mùa trong năm.";
+        // 2. Định nghĩa logic xử lý cho từng nút
+
+        // Nút "Quỹ đạo"
+        document.getElementById('btnOrbit').addEventListener('click', function() {
+            speechBubble.innerText = "Quỹ đạo là đường đi của Trái Đất quanh Mặt Trời. Một vòng mất khoảng 365 ngày đó!";
+        });
+
+        // Nút "Mặt trời"
+        document.getElementById('btnSun').addEventListener('click', function() {
+            speechBubble.innerText = "Mặt Trời chói chang! Nó là một ngôi sao khổng lồ, cung cấp năng lượng cho sự sống của chúng ta.";
+        });
+
+        // Nút "Độ nghiêng"
+        document.getElementById('btnAxis').addEventListener('click', function() {
+            speechBubble.innerText = "Trục Trái Đất nghiêng 23.5 độ. Độ nghiêng này tạo ra 4 mùa Xuân, Hạ, Thu, Đông đó bạn.";
+        });
+
+        // Nút "Tạm dừng/Tiếp tục" - PHẦN QUAN TRỌNG NHẤT
+        btnToggle.addEventListener('click', function() {
+            isRotating = !isRotating; // Đảo ngược trạng thái
+
+            if (isRotating) {
+                // Nếu đang quay -> đổi thành tiếp tục chạy
+                orbitElement.style.animationPlayState = 'running';
+                earthSystem.style.animationPlayState = 'running';
+                btnToggle.innerText = "Tạm dừng"; // Đổi text trên nút
+                speechBubble.innerText = "Vũ trụ lại tiếp tục chuyển động rồi!";
+            } else {
+                // Nếu đang quay -> đổi thành tạm dừng
+                orbitElement.style.animationPlayState = 'paused';
+                earthSystem.style.animationPlayState = 'paused';
+                btnToggle.innerText = "Tiếp tục"; // Đổi text trên nút
+                speechBubble.innerText = "Chúng ta vừa tạm dừng vòng quay của Trái Đất!";
             }
-        }
+        });
 
-        function showFlare() {
-            flare.style.display = 'block';
-            bubble.innerText = "Bạn vừa thấy hiện tượng LENS FLARE khi nhìn vào nguồn sáng mạnh!";
-            setTimeout(() => { flare.style.display = 'none'; }, 2000);
-        }
+        // 3. Xử lý thanh trượt tốc độ (Speed Slider)
+        speedSlider.addEventListener('input', function() {
+            const val = this.value;
+            // Công thức: Giá trị slider càng thấp (5) thì animationDuration càng dài (chậm). 
+            // Giá trị slider càng cao (60) thì animationDuration càng ngắn (nhanh).
+            const duration = (65 - val) + 's';
+            
+            // Cập nhật duration cho cả hai animation để giữ đồng bộ
+            orbitElement.style.animationDuration = duration;
+            earthSystem.style.animationDuration = duration;
 
-        function toggleRotation() {
-            isRotating = !isRotating;
-            const animations = document.querySelectorAll('.orbit, .earth-system');
-            animations.forEach(anim => {
-                anim.style.animationPlayState = isRotating ? 'running' : 'paused';
-            });
-            bubble.innerText = isRotating ? "Thời gian lại tiếp tục trôi..." : "Chúng ta vừa tạm dừng quỹ đạo Trái Đất!";
-        }
+            if (val < 15) {
+                speechBubble.innerText = "Trái Đất quay chậm quá...";
+            } else if (val > 50) {
+                speechBubble.innerText = "Nhanh quá, nhanh quá! Chóng mặt quá Bé Sen ơi!";
+            }
+        });
+
     </script>
 </body>
 </html>
